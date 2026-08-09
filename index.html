@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0f0a">
+    <meta name="description" content="Mohith T K — Aspiring Data Scientist &amp; AI Researcher. Portfolio showcasing projects in AI, ML, IoT, and Data Science.">
+    <title>Mohith T K — Portfolio</title>
+    <style>
+        :root {
+            --bg: #0a0f0a;
+            --surface: #111a11;
+            --surface2: #162016;
+            --text: #e0e8e0;
+            --text2: #b0bdb0;
+            --text3: #7a8c7a;
+            --accent: #4ade80;
+            --accent2: #22c55e;
+            --accent3: #166534;
+            --radius: 14px;
+            --radius-sm: 8px;
+            --font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            --mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Cascadia Code', Consolas, monospace;
+            --nav-h: 60px;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: #2a3a2a #0a0f0a;
+            -webkit-tap-highlight-color: transparent;
+            font-size: 16px;
+        }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        /* ── Canvas ──────────────────────────────── */
+        #bg-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        /* Fallback gradient if canvas is empty */
+        .bg-fallback {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            background: radial-gradient(ellipse at 60% 30%, #0f1f0f 0%, #0a0f0a 50%, #060c06 100%);
+            pointer-events: none;
+        }
+
+        /* ── Layout ──────────────────────────────── */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ── NAV ─────────────────────────────────── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            background: rgba(10, 20, 10, 0.9);
+            border-bottom: 1px solid rgba(74, 222, 128, 0.12);
+        }
+        @supports (backdrop-filter: blur(18px)) {
+            nav {
+                backdrop-filter: blur(18px) saturate(120%);
+                -webkit-backdrop-filter: blur(18px) saturate(120%);
+                background: rgba(10, 20, 10, 0.75);
+            }
+        }
+        .nav-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: var(--nav-h);
+        }
+        .nav-logo {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--accent);
+            letter-spacing: -0.02em;
+            text-decoration: none;
+            z-index: 1001;
+        }
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            list-style: none;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text2);
+            font-size: 0.88rem;
+            font-weight: 500;
+            transition: color 0.25s;
+            letter-spacing: 0.01em;
+        }
+        .nav-links a:hover, .nav-links a:active { color: var(--accent); }
+
+        /* ── HAMBURGER ───────────────────────────── */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            width: 32px; height: 32px;
+            cursor: pointer;
+            z-index: 1001;
+            background: none;
+            border: none;
+            padding: 4px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .hamburger span {
+            display: block;
+            width: 22px; height: 2px;
+            background: var(--accent);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            transform-origin: center;
+        }
+        .hamburger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .hamburger.active span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+        .hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        /* ── MOBILE MENU ─────────────────────────── */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            background: rgba(8, 14, 8, 0.97);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 36px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+        .mobile-menu.active { opacity: 1; pointer-events: auto; }
+        .mobile-menu a {
+            text-decoration: none;
+            color: #d0dcd0;
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            transition: color 0.25s;
+        }
+        .mobile-menu a:hover, .mobile-menu a:active { color: var(--accent); }
+
+        /* ── SECTIONS ────────────────────────────── */
+        section {
+            position: relative;
+            z-index: 1;
+            padding: 100px 0;
+        }
+        .section-tag {
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+        .section-title {
+            font-size: clamp(1.5rem, 4.5vw, 2.2rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin-bottom: 40px;
+            color: #f0f5f0;
+            line-height: 1.2;
+        }
+        .section-title span { color: var(--accent); }
+
+        /* ── HERO ────────────────────────────────── */
+        #hero {
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            padding-top: var(--nav-h);
+        }
+        .hero-grid {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+        .hero-text { flex: 1; min-width: 280px; }
+        .hero-name {
+            font-size: clamp(2.2rem, 8vw, 4.2rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1.05;
+            margin-bottom: 12px;
+            color: #f0f5f0;
+        }
+        .hero-name .hl { color: var(--accent); }
+        .hero-title {
+            font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+            color: var(--accent2);
+            font-weight: 600;
+            margin-bottom: 14px;
+            letter-spacing: -0.01em;
+            max-width: 460px;
+        }
+        .hero-sub {
+            color: var(--text2);
+            font-size: clamp(0.88rem, 2vw, 1.05rem);
+            margin-bottom: 32px;
+            max-width: 500px;
+        }
+        .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+        .hero-visual { flex: 1; min-width: 200px; text-align: center; }
+
+        /* ── BUTTONS ─────────────────────────────── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 13px 26px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+            letter-spacing: 0.01em;
+            font-family: var(--font);
+            white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+            color: #0a1a0a;
+        }
+        .btn-primary {
+            background: var(--accent);
+            box-shadow: 0 0 30px rgba(74, 222, 128, 0.25);
+        }
+        .btn-primary:hover { background: #6ee7a0; box-shadow: 0 0 45px rgba(74, 222, 128, 0.4); transform: translateY(-2px); }
+        .btn-primary:active { transform: scale(0.97); }
+        .btn-outline {
+            background: transparent;
+            color: var(--accent);
+            border: 1.5px solid rgba(74, 222, 128, 0.35);
+        }
+        .btn-outline:hover { background: rgba(74, 222, 128, 0.08); border-color: var(--accent); }
+        .btn-outline:active { transform: scale(0.97); }
+
+        /* ── CARDS ───────────────────────────────── */
+        .card-3d {
+            background: rgba(22, 36, 22, 0.85);
+            border: 1px solid rgba(74, 222, 128, 0.12);
+            border-radius: var(--radius);
+            padding: 32px;
+            transition: transform 0.4s, box-shadow 0.4s;
+        }
+        @supports (backdrop-filter: blur(14px)) {
+            .card-3d {
+                backdrop-filter: blur(14px);
+                -webkit-backdrop-filter: blur(14px);
+                background: rgba(22, 36, 22, 0.65);
+            }
+        }
+        @media (hover: hover) {
+            .card-3d:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(74, 222, 128, 0.06);
+            }
+        }
+
+        /* ── ABOUT ───────────────────────────────── */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+        .about-text p { color: var(--text2); margin-bottom: 16px; font-size: 0.98rem; }
+        .about-text strong { color: var(--text); }
+        .highlight-box {
+            background: rgba(74, 222, 128, 0.06);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            padding: 18px 22px;
+            margin-top: 20px;
+        }
+        .highlight-box p { margin: 0; color: #c8d8c8; font-size: 0.93rem; font-style: italic; }
+
+        /* ── EDUCATION ───────────────────────────── */
+        .edu-card { margin-bottom: 24px; }
+        .edu-card h3 {
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
+            color: #e8f0e8;
+            margin-bottom: 4px;
+            letter-spacing: -0.02em;
+        }
+        .edu-card .school {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+        .edu-card .years {
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            color: var(--text3);
+            margin-bottom: 12px;
+        }
+
+        /* ── TAGS ────────────────────────────────── */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .tag {
+            background: rgba(74, 222, 128, 0.08);
+            color: var(--accent2);
+            border: 1px solid rgba(74, 222, 128, 0.15);
+            padding: 5px 13px;
+            border-radius: 50px;
+            font-size: 0.76rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        /* ── PROJECTS ────────────────────────────── */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+            gap: 24px;
+        }
+        .project-card { padding: 28px; position: relative; overflow: hidden; }
+        .project-card .num {
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            color: var(--accent);
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
+        }
+        .project-card h3 {
+            font-size: 1.15rem;
+            color: #eef5ee;
+            margin-bottom: 6px;
+            letter-spacing: -0.02em;
+        }
+        .project-card .tech {
+            font-family: var(--mono);
+            font-size: 0.73rem;
+            color: var(--accent2);
+            margin-bottom: 12px;
+        }
+        .project-card p { color: var(--text2); font-size: 0.9rem; margin-bottom: 12px; }
+        .project-card .note { font-size: 0.75rem; color: var(--text3); font-style: italic; margin-top: 8px; }
+
+        /* ── CONTACT ─────────────────────────────── */
+        .contact-grid { display: flex; flex-wrap: wrap; gap: 16px; }
+        .contact-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text2);
+            padding: 14px 22px;
+            border-radius: var(--radius-sm);
+            background: rgba(22, 36, 22, 0.7);
+            border: 1px solid rgba(74, 222, 128, 0.1);
+            transition: all 0.3s;
+            font-size: 0.88rem;
+            word-break: break-all;
+            flex: 1;
+            min-width: 200px;
+        }
+        .contact-link:hover, .contact-link:active {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(74, 222, 128, 0.06);
+        }
+        .contact-icon {
+            width: 36px; height: 36px;
+            min-width: 36px;
+            border-radius: 50%;
+            background: rgba(74, 222, 128, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        /* ── FOOTER ──────────────────────────────── */
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            color: var(--text3);
+            font-size: 0.82rem;
+            border-top: 1px solid rgba(74, 222, 128, 0.08);
+        }
+        footer .leaf { color: var(--accent); }
+
+        /* ── DIVIDER ─────────────────────────────── */
+        .divider {
+            width: 60px; height: 3px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+            border-radius: 2px;
+            margin: 12px 0 28px;
+        }
+
+        /* ── FADE IN (progressive enhancement) ───── */
+        /* Content is VISIBLE by default. Only hidden if JS adds the class. */
+        .fade-in {
+            opacity: 1;
+            transform: none;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        /* JS will add .fade-ready to hide, then .fade-done to reveal */
+        .fade-in.fade-ready {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        .fade-in.fade-done {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── SCROLL TO TOP ───────────────────────── */
+        .scroll-top {
+            position: fixed;
+            bottom: 24px; right: 24px;
+            z-index: 200;
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: rgba(74, 222, 128, 0.2);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            color: var(--accent);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+            transition: opacity 0.3s, transform 0.3s;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(10px);
+        }
+        .scroll-top.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .scroll-top:hover, .scroll-top:active { background: rgba(74, 222, 128, 0.35); }
+
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════ */
+        @media (max-width: 1024px) {
+            .container { padding: 0 28px; }
+            .nav-inner { padding: 0 28px; }
+            .about-grid { gap: 28px; }
+            .hero-grid { gap: 40px; }
+            section { padding: 80px 0; }
+        }
+        @media (max-width: 768px) {
+            :root { --nav-h: 56px; }
+            .container { padding: 0 20px; }
+            .nav-inner { padding: 0 20px; }
+            .hamburger { display: flex; }
+            .nav-links { display: none; }
+            .mobile-menu { display: flex; }
+            .hero-grid { flex-direction: column; gap: 24px; text-align: center; }
+            .hero-title, .hero-sub { max-width: 100%; margin-left: auto; margin-right: auto; }
+            .hero-btns { justify-content: center; }
+            .hero-visual { display: none; }
+            .about-grid { grid-template-columns: 1fr; gap: 24px; }
+            .projects-grid { grid-template-columns: 1fr; }
+            section { padding: 64px 0; }
+            .section-title { margin-bottom: 28px; }
+            .card-3d { padding: 24px; }
+            .contact-link { min-width: 100%; }
+            #hero { min-height: auto; min-height: auto; padding: calc(var(--nav-h) + 48px) 0 60px; }
+        }
+        @media (max-width: 480px) {
+            :root { --nav-h: 52px; }
+            html { font-size: 15px; }
+            .container { padding: 0 16px; }
+            .nav-inner { padding: 0 16px; }
+            .nav-logo { font-size: 1.1rem; }
+            .hero-name { font-size: 2.2rem; }
+            .hero-btns { flex-direction: column; width: 100%; }
+            .btn { width: 100%; justify-content: center; padding: 14px 20px; font-size: 0.88rem; }
+            .section-tag { font-size: 0.68rem; }
+            section { padding: 50px 0; }
+            .card-3d { padding: 20px; border-radius: 12px; }
+            .tags { gap: 6px; }
+            .tag { font-size: 0.7rem; padding: 4px 10px; }
+            .edu-card h3 { font-size: 1.05rem; }
+            .project-card { padding: 22px; }
+            .project-card h3 { font-size: 1.05rem; }
+            .contact-link { padding: 12px 16px; font-size: 0.82rem; }
+            footer { padding: 28px 0; font-size: 0.75rem; }
+            .scroll-top { bottom: 18px; right: 18px; width: 40px; height: 40px; }
+        }
+        @media (max-width: 360px) {
+            html { font-size: 14px; }
+            .container { padding: 0 12px; }
+            .card-3d { padding: 16px; }
+            .mobile-menu a { font-size: 1.2rem; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            html { scroll-behavior: auto; }
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- Fallback background (always visible) -->
+<div class="bg-fallback" aria-hidden="true"></div>
+
+<!-- 3D Canvas (enhancement layer) -->
+<canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+<!-- ═══════════ NAV ═══════════ -->
+<nav>
+    <div class="nav-inner">
+        <a href="#hero" class="nav-logo" aria-label="Home">🌿 MTK</a>
+        <ul class="nav-links" role="navigation" aria-label="Desktop navigation">
+            <li><a href="#about">About</a></li>
+            <li><a href="#education">Education</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+
+<!-- ═══════════ MOBILE MENU ═══════════ -->
+<div class="mobile-menu" role="navigation" aria-label="Mobile navigation">
+    <a href="#about" data-nav>About</a>
+    <a href="#education" data-nav>Education</a>
+    <a href="#projects" data-nav>Projects</a>
+    <a href="#contact" data-nav>Contact</a>
+</div>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<main class="container">
+
+    <!-- HERO -->
+    <section id="hero">
+        <div class="hero-grid">
+            <div class="hero-text">
+                <p class="section-tag">Aspiring Data Scientist &amp; AI Researcher</p>
+                <h1 class="hero-name">Mohith <span class="hl">T K</span></h1>
+                <p class="hero-title">Transforming data into intelligent solutions for real-world challenges.</p>
+                <p class="hero-sub">Data Science · Artificial Intelligence · Machine Learning · IoT · Research</p>
+                <div class="hero-btns">
+                    <a href="#projects" class="btn btn-primary">✦ View My Projects</a>
+                    <a href="#contact" class="btn btn-outline">✉ Contact Me</a>
+                </div>
+            </div>
+            <div class="hero-visual" aria-hidden="true"></div>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about">
+        <p class="section-tag">About Me</p>
+        <h2 class="section-title">The <span>person</span> behind the code.</h2>
+        <div class="divider"></div>
+        <div class="about-grid">
+            <div class="about-text">
+                <p>I am a <strong>Data Science and Artificial Intelligence graduate</strong> with a strong interest in machine learning, data analytics, and AI-driven problem solving.</p>
+                <p>I completed my <strong>BSc in Artificial Intelligence and Data Science at Rathinam College of Arts and Science</strong>, where I developed foundational knowledge in programming, machine learning, deep learning, data analysis, artificial intelligence, and IoT technologies.</p>
+                <p>My academic projects have allowed me to explore the application of AI to real-world challenges, including <strong>misinformation detection, healthcare prediction, vehicle safety, and forensic analysis</strong>.</p>
+                <p>I am now pursuing an <strong>MSc in Data Science at the University of Surrey, UK</strong>, where I aim to strengthen my expertise in advanced data analytics, machine learning, statistical modelling, and AI research.</p>
+                <div class="highlight-box">
+                    <p>"Discipline and consistency are essential for long-term growth."</p>
+                </div>
+            </div>
+            <div class="card-3d">
+                <h3 style="color:var(--accent); margin-bottom:16px; font-size:1.1rem;">🧘 Beyond Data</h3>
+                <div class="tags">
+                    <span class="tag">🥋 Karate</span>
+                    <span class="tag">🏃 Running</span>
+                    <span class="tag">⛰️ Trekking</span>
+                    <span class="tag">🏋️ Bodybuilding</span>
+                    <span class="tag">🌲 Adventure</span>
+                </div>
+                <p style="margin-top:18px; color:var(--text2); font-size:0.9rem;">My experience in martial arts, fitness, and outdoor adventures has developed my resilience, determination, and willingness to challenge myself — qualities I bring into every data science problem I tackle.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- EDUCATION -->
+    <section id="education">
+        <p class="section-tag">Education</p>
+        <h2 class="section-title">Academic <span>journey</span>.</h2>
+        <div class="divider"></div>
+
+        <div class="card-3d edu-card">
+            <h3>MSc Data Science</h3>
+            <p class="school">University of Surrey — Guildford, United Kingdom</p>
+            <p class="years">2026 – 2027</p>
+            <p style="color:var(--text2); font-size:0.9rem;">Currently pursuing postgraduate studies in Data Science, building upon my undergraduate background in Artificial Intelligence and Data Science.</p>
+            <div class="tags">
+                <span class="tag">Advanced Data Science</span>
+                <span class="tag">Machine Learning</span>
+                <span class="tag">AI</span>
+                <span class="tag">Statistical Modelling</span>
+                <span class="tag">Predictive Modelling</span>
+                <span class="tag">Data-Driven Research</span>
+            </div>
+        </div>
+
+        <div class="card-3d edu-card">
+            <h3>BSc Artificial Intelligence &amp; Data Science</h3>
+            <p class="school">Rathinam College of Arts and Science</p>
+            <p class="years">2023 – 2026</p>
+            <p style="color:var(--text2); font-size:0.9rem;">Completed my undergraduate degree specializing in Artificial Intelligence and Data Science.</p>
+            <div class="tags">
+                <span class="tag">Python</span>
+                <span class="tag">Deep Learning</span>
+                <span class="tag">Data Analysis</span>
+                <span class="tag">DBMS</span>
+                <span class="tag">Data Viz</span>
+                <span class="tag">IoT</span>
+                <span class="tag">Predictive Analytics</span>
+            </div>
+            <p style="margin-top:10px; font-family:var(--mono); font-size:0.78rem; color:var(--accent2);">IELTS: 6.5</p>
+        </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects">
+        <p class="section-tag">Projects &amp; Research</p>
+        <h2 class="section-title">What I've <span>built</span>.</h2>
+        <div class="divider"></div>
+
+        <div class="projects-grid">
+            <div class="card-3d project-card">
+                <p class="num">01</p>
+                <h3>Fake News Detection Model</h3>
+                <p class="tech">Python · CNN · Deep Learning · NLP</p>
+                <p>Developed a deep learning-based model designed to distinguish between real and fake news. The project explored how neural networks can be applied to textual data to identify patterns associated with misinformation.</p>
+                <div class="tags">
+                    <span class="tag">Data Preprocessing</span>
+                    <span class="tag">Text Classification</span>
+                    <span class="tag">CNN Architecture</span>
+                </div>
+            </div>
+
+            <div class="card-3d project-card">
+                <p class="num">02</p>
+                <h3>Stroke Prediction System</h3>
+                <p class="tech">Python · ML · Data Analysis · Scikit-learn</p>
+                <p>Developed a machine learning-based healthcare prediction system that analyses patient-related attributes to estimate the likelihood of stroke for early risk identification.</p>
+                <div class="tags">
+                    <span class="tag">EDA</span>
+                    <span class="tag">Feature Selection</span>
+                    <span class="tag">Predictive Modelling</span>
+                </div>
+                <p class="note">*Academic project only; not intended to replace professional medical diagnosis.</p>
+            </div>
+
+            <div class="card-3d project-card">
+                <p class="num">03</p>
+                <h3>AI-Powered Vehicle Black Box</h3>
+                <p class="tech">IoT · AI · Sensors · Forensic Analysis</p>
+                <p>Designed an IoT-based vehicle black box concept capable of collecting critical vehicle and environmental information for forensic accident analysis.</p>
+                <div class="tags">
+                    <span class="tag">IoT Integration</span>
+                    <span class="tag">Sensor Data</span>
+                    <span class="tag">Digital Forensics</span>
+                </div>
+            </div>
+
+            <div class="card-3d project-card">
+                <p class="num">04</p>
+                <h3>Research Interest: Space Proximity Detection</h3>
+                <p class="tech">Meteoroid Distance Detection for Spacecraft</p>
+                <p>Long-term research interest in applying AI, sensor fusion, computer vision, and data analysis to spacecraft safety and meteoroid proximity detection.</p>
+                <div class="tags">
+                    <span class="tag">Space Safety</span>
+                    <span class="tag">Sensor Fusion</span>
+                    <span class="tag">Computer Vision</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+        <p class="section-tag">Get In Touch</p>
+        <h2 class="section-title">Let's <span>connect</span>.</h2>
+        <div class="divider"></div>
+        <div class="contact-grid">
+            <a href="mailto:tkmohith2006@gmail.com" class="contact-link">
+                <span class="contact-icon">✉</span> tkmohith2006@gmail.com
+            </a>
+            <a href="https://github.com/Mohith-373" target="_blank" rel="noopener" class="contact-link">
+                <span class="contact-icon">⬡</span> github.com/Mohith-373
+            </a>
+            <a href="https://linkedin.com/in/mohith-tk-5412632a2/" target="_blank" rel="noopener" class="contact-link">
+                <span class="contact-icon">🔗</span> LinkedIn Profile
+            </a>
+        </div>
+    </section>
+
+    <footer>
+        <p>🌿 <span class="leaf">Mohith T K</span> — Data Science · Artificial Intelligence · Research · Innovation</p>
+        <p style="margin-top:6px;">Built with purpose. Designed for a greener web. © 2026</p>
+    </footer>
+
+</main>
+
+<!-- Scroll to top -->
+<button class="scroll-top" aria-label="Scroll to top" title="Back to top">↑</button>
+
+<!-- ═══════════ SCRIPTS ═══════════ -->
+<script>
+/* ── CRITICAL: Make content always visible ── */
+/* Fade-in is progressive enhancement. If JS fails or is slow, content stays visible. */
+(function() {
+    // Add fade-ready to all fade-in elements AFTER a tiny delay
+    // This way if JS crashes, content remains visible
+    var els = document.querySelectorAll('.fade-in');
+    // If we got here, JS works. Add fade-ready to hide them, then observer reveals them.
+    els.forEach(function(el) { el.classList.add('fade-ready'); });
+
+    // Intersection Observer for fade-in animation
+    if ('IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-done');
+                }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+
+        els.forEach(function(el) { observer.observe(el); });
+
+        // Safety fallback: reveal ALL after 2 seconds no matter what
+        setTimeout(function() {
+            els.forEach(function(el) { el.classList.add('fade-done'); });
+        }, 2000);
+    } else {
+        // No observer support — just show everything immediately
+        els.forEach(function(el) { el.classList.add('fade-done'); });
+    }
+})();
+</script>
+
+<!-- ═══════════ THREE.JS (enhancement only) ═══════════ -->
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+</script>
+<script type="module">
+/* Three.js 3D background — fails gracefully if not supported */
+try {
+    var canvas = document.getElementById('bg-canvas');
+    if (!canvas) throw new Error('No canvas');
+
+    import('three').then(function(mod) {
+        var THREE = mod;
+        if (!THREE || !THREE.WebGLRenderer) return;
+
+        var isMobile = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || window.innerWidth < 768;
+
+        // Check WebGL support
+        try {
+            var testCanvas = document.createElement('canvas');
+            var gl = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
+            if (!gl) return;
+        } catch(e) { return; }
+
+        var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: !isMobile, alpha: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
+
+        var scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2('#0a0f0a', 0.00015);
+
+        var camera = new THREE.PerspectiveCamera(isMobile ? 60 : 55, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.set(0, 1.5, isMobile ? 9 : 8);
+        camera.lookAt(0, 0, 0);
+
+        // Lighting
+        scene.add(new THREE.AmbientLight('#2d5a2d', 1.4));
+        var sunLight = new THREE.DirectionalLight('#c8f0c8', 3.5);
+        sunLight.position.set(5, 8, 3);
+        scene.add(sunLight);
+        var accentLight = new THREE.PointLight('#4ade80', isMobile ? 20 : 30, 20, 1.5);
+        accentLight.position.set(-3, 2, 4);
+        scene.add(accentLight);
+        var accentLight2 = new THREE.PointLight('#22c55e', isMobile ? 14 : 20, 15, 1.5);
+        accentLight2.position.set(3, -1, -2);
+        scene.add(accentLight2);
+
+        // Globe
+        var globeGroup = new THREE.Group();
+        scene.add(globeGroup);
+        var gDetail = isMobile ? 2 : 3;
+        var globeGeo = new THREE.IcosahedronGeometry(1.6, gDetail);
+        var globe = new THREE.Mesh(globeGeo, new THREE.MeshBasicMaterial({ color: '#4ade80', wireframe: true, transparent: true, opacity: 0.18 }));
+        globeGroup.add(globe);
+        var innerGeo = new THREE.IcosahedronGeometry(1.55, gDetail);
+        globeGroup.add(new THREE.Mesh(innerGeo, new THREE.MeshStandardMaterial({ color: '#1a3a1a', roughness: 0.7, metalness: 0.1, transparent: true, opacity: 0.15 })));
+        for (var i = 0; i < 3; i++) {
+            var ring = new THREE.Mesh(
+                new THREE.TorusGeometry(2.0 + i * 0.4, 0.008, isMobile ? 12 : 16, isMobile ? 80 : 120),
+                new THREE.MeshBasicMaterial({ color: '#4ade80', transparent: true, opacity: 0.22 - i * 0.05 })
+            );
+            ring.rotation.x = Math.PI / 2.3 + i * 0.3;
+            ring.rotation.y = i * 0.5;
+            ring.userData = { speed: 0.15 + i * 0.08 };
+            globeGroup.add(ring);
+        }
+        globeGroup.position.set(isMobile ? 0 : 2.5, 0.8, -1.5);
+
+        // Floating shapes
+        var shapes = [];
+        var sc = ['#4ade80', '#22c55e', '#166534', '#86efac', '#bbf7d0'];
+        var shapeCount = isMobile ? 18 : 35;
+        for (var i = 0; i < shapeCount; i++) {
+            var r = Math.random(), geo;
+            if (r < 0.3) geo = new THREE.OctahedronGeometry(0.08 + Math.random() * 0.18);
+            else if (r < 0.55) geo = new THREE.IcosahedronGeometry(0.06 + Math.random() * 0.14);
+            else if (r < 0.75) geo = new THREE.TetrahedronGeometry(0.07 + Math.random() * 0.16);
+            else geo = new THREE.TorusGeometry(0.08 + Math.random() * 0.12, 0.02, 8, 8);
+            var mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
+                color: sc[Math.floor(Math.random() * sc.length)],
+                roughness: 0.4, metalness: 0.25,
+                emissive: sc[Math.floor(Math.random() * 3)],
+                emissiveIntensity: 0.15
+            }));
+            mesh.position.set((Math.random() - 0.5) * 14, (Math.random() - 0.5) * 10, (Math.random() - 0.5) * 6 - 1);
+            mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+            mesh.scale.setScalar(0.6 + Math.random() * 1.4);
+            scene.add(mesh);
+            shapes.push({ mesh: mesh, speed: 0.15 + Math.random() * 0.45, rotSpeed: 0.2 + Math.random() * 0.7, amplitude: 0.3 + Math.random() * 0.8, offset: Math.random() * Math.PI * 2 });
+        }
+
+        // Particles
+        var pCount = isMobile ? 80 : 200;
+        var pGeo = new THREE.BufferGeometry();
+        var pos = new Float32Array(pCount * 3);
+        for (var i = 0; i < pCount; i++) {
+            pos[i * 3] = (Math.random() - 0.5) * 16;
+            pos[i * 3 + 1] = (Math.random() - 0.5) * 12;
+            pos[i * 3 + 2] = (Math.random() - 0.5) * 8 - 1;
+        }
+        pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        var particles = new THREE.Points(pGeo, new THREE.PointsMaterial({
+            color: '#6ee7a0', size: isMobile ? 0.04 : 0.03,
+            transparent: true, opacity: 0.5,
+            blending: THREE.AdditiveBlending, depthWrite: false
+        }));
+        scene.add(particles);
+
+        // Interaction
+        var mouse = { x: 0, y: 0 };
+        var targetX = 0, targetY = 0;
+        window.addEventListener('mousemove', function(e) {
+            targetX = (e.clientX / window.innerWidth) * 2 - 1;
+            targetY = -(e.clientY / window.innerHeight) * 2 + 1;
+        });
+        window.addEventListener('touchmove', function(e) {
+            if (e.touches.length === 1) {
+                targetX = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
+                targetY = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
+            }
+        }, { passive: true });
+
+        var scrollY = 0;
+        window.addEventListener('scroll', function() { scrollY = window.scrollY; }, { passive: true });
+
+        // Animation
+        var clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            var dt = Math.min(clock.getDelta(), 0.1);
+            var t = performance.now() * 0.001;
+            mouse.x += (targetX - mouse.x) * 0.03;
+            mouse.y += (targetY - mouse.y) * 0.03;
+            globeGroup.rotation.y += dt * 0.25;
+            globeGroup.rotation.x += dt * 0.06;
+            globeGroup.children.forEach(function(c) { if (c.userData && c.userData.speed) c.rotation.z += dt * c.userData.speed; });
+            shapes.forEach(function(s) {
+                s.mesh.rotation.x += dt * s.rotSpeed;
+                s.mesh.rotation.y += dt * s.rotSpeed * 0.7;
+                s.mesh.position.y += Math.sin(t * s.speed + s.offset) * dt * s.amplitude * 0.5;
+            });
+            particles.rotation.y += dt * 0.04;
+            particles.rotation.x += dt * 0.02;
+            var sf = scrollY * 0.0003;
+            camera.position.x = mouse.x * 1.2 + sf * 2;
+            camera.position.y = 1.5 - mouse.y * 0.6 - sf * 1.5;
+            camera.lookAt(0, -sf * 0.8, 0);
+            accentLight.intensity = (isMobile ? 18 : 28) + Math.sin(t * 0.7) * 4;
+            accentLight2.intensity = (isMobile ? 12 : 18) + Math.cos(t * 0.6) * 4;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Hide fallback gradient when 3D renders
+        var fb = document.querySelector('.bg-fallback');
+        if (fb) { fb.style.opacity = '0'; fb.style.transition = 'opacity 1s'; }
+
+        // Resize (debounced)
+        var rt;
+        window.addEventListener('resize', function() {
+            clearTimeout(rt);
+            rt = setTimeout(function() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }, 200);
+        });
+
+    }).catch(function() {
+        // Three.js failed to load — fallback gradient already visible, do nothing
+        console.log('3D background skipped (module load failed) — fallback active');
+    });
+
+} catch(e) {
+    // Silent fail — fallback CSS gradient handles the background
+    console.log('3D background not available — fallback active');
+}
+</script>
+
+<!-- ═══════════ DOM INTERACTIONS ═══════════ -->
+<script>
+(function() {
+    // ── Hamburger ──
+    var hamburger = document.querySelector('.hamburger');
+    var mobileMenu = document.querySelector('.mobile-menu');
+    var mobileLinks = document.querySelectorAll('[data-nav]');
+    var menuOpen = false;
+
+    function toggleMenu() {
+        menuOpen = !menuOpen;
+        hamburger.classList.toggle('active', menuOpen);
+        mobileMenu.classList.toggle('active', menuOpen);
+        hamburger.setAttribute('aria-expanded', menuOpen);
+        document.body.style.overflow = menuOpen ? 'hidden' : '';
+    }
+
+    if (hamburger) hamburger.addEventListener('click', toggleMenu);
+    mobileLinks.forEach(function(link) {
+        link.addEventListener('click', function() { if (menuOpen) toggleMenu(); });
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && menuOpen) toggleMenu();
+    });
+
+    // ── Scroll to top ──
+    var scrollTopBtn = document.querySelector('.scroll-top');
+    function updateScrollTop() {
+        if (scrollTopBtn) scrollTopBtn.classList.toggle('visible', window.scrollY > 500);
+    }
+    window.addEventListener('scroll', updateScrollTop, { passive: true });
+    if (scrollTopBtn) {
+        scrollTopBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    // ── Smooth scroll for all hash links ──
+    document.querySelectorAll('a[href^="#"]').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            var target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+})();
+</script>
+
+</body>
+</html>
