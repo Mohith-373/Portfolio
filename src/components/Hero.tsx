@@ -2,7 +2,7 @@ import { Download, GraduationCap, MapPin } from "lucide-react";
 import { site } from "@/content/site";
 import { withBase } from "@/lib/paths";
 import { GitHubIcon, LinkedInIcon } from "./BrandIcons";
-import { HeroFigure } from "./HeroFigure";
+import { HeroPlayground } from "./HeroPlayground";
 
 export function Hero() {
   return (
@@ -83,7 +83,7 @@ export function Hero() {
           </div>
         </div>
 
-        <HeroFigure />
+        <HeroPlayground />
       </div>
     </section>
   );

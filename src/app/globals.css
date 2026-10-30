@@ -89,36 +89,6 @@ summary::-webkit-details-marker {
   display: none;
 }
 
-/* Hero figure: the page's single orchestrated motion. Points appear left to right,
-   then the fitted trend draws in and the uncertainty band fades up behind it. */
-@media (prefers-reduced-motion: no-preference) {
-  .fig-point {
-    opacity: 0;
-    animation: fig-fade 420ms ease-out forwards;
-  }
-  .fig-band {
-    opacity: 0;
-    animation: fig-fade 700ms ease-out 1100ms forwards;
-  }
-  .fig-trend {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    animation: fig-draw 1100ms cubic-bezier(0.65, 0, 0.35, 1) 800ms forwards;
-  }
-}
-
-@keyframes fig-fade {
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fig-draw {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

@@ -110,4 +110,4 @@ These checks were run in Chromium against the production build, served under `/P
 - External links open in a new tab with `rel="noopener noreferrer"`
 - Contact form: field errors show, focus moves to the first invalid field, and a valid message opens the email app with subject and body filled in
 - Keyboard: "Skip to content" is the first tab stop, focus outlines are visible, and the mobile menu closes with Escape; picking a section in the mobile menu closes it and scrolls to that section
-- Motion: the hero figure animation is skipped when the device asks for reduced motion
+- Hero clustering animation: runs live, responds to the pointer, adds points on click, changes k, and stays still (but interactive) when the device asks for reduced motion; it pauses when scrolled out of view
