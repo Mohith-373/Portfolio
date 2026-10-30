@@ -86,6 +86,17 @@ Export the new CV as a PDF and save it over `public/cv/Mohith-Thuraiyur-Kirubana
 
 The button then changes to **Send message** and shows success or error feedback.
 
+## The "Draw a digit" game
+
+The hero game is a small convolutional neural network (about 52,000 weights) trained on MNIST, running in the browser with no ML library.
+
+- Model weights: `public/models/digits.json` (about 280 KB, loaded after the page)
+- Browser inference and MNIST-style preprocessing: `src/lib/digitModel.ts`
+- Game UI with Play and How it works tabs: `src/components/HeroDigitGame.tsx`
+- Training script: `scripts/train_digits.py`. It downloads MNIST, trains with data augmentation (rotation, scaling, shifting and stroke thickness) so it copes with mouse and finger drawings, and writes the weights file. Run `pip install "jax[cpu]" numpy`, then `python scripts/train_digits.py`. It takes about 3 minutes on a laptop CPU.
+
+Last training run: 99.0% accuracy on the 10,000 MNIST test digits and 98.1% on distorted versions of them.
+
 ## SEO configuration
 
 - **Title and description:** `site.seo` in `site.ts`
@@ -110,4 +121,4 @@ These checks were run in Chromium against the production build, served under `/P
 - External links open in a new tab with `rel="noopener noreferrer"`
 - Contact form: field errors show, focus moves to the first invalid field, and a valid message opens the email app with subject and body filled in
 - Keyboard: "Skip to content" is the first tab stop, focus outlines are visible, and the mobile menu closes with Escape; picking a section in the mobile menu closes it and scrolls to that section
-- Hero clustering animation: runs live, responds to the pointer, adds points on click, changes k, and stays still (but interactive) when the device asks for reduced motion; it pauses when scrolled out of view
+- Draw-a-digit game: drawn digits are recognised in the browser, the Example and Clear buttons work, and the How it works tab opens and closes
