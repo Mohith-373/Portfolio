@@ -1,8 +1,13 @@
-name: Deploy portfolio to GitHub Pages
+name: Redirect GitHub Pages to Cloudflare
+
+# The portfolio is built and hosted by Cloudflare Pages at https://mohith-tk.pages.dev.
+# This workflow keeps the old address (mohith-373.github.io/Portfolio) working by
+# publishing a tiny page that forwards every path to the same path on the new site.
 
 on:
   push:
     branches: [main]
+    paths: ["redirect/**", ".github/workflows/deploy.yml"]
   workflow_dispatch:
 
 permissions:
@@ -15,39 +20,17 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Configure GitHub Pages
-        id: pages
-        uses: actions/configure-pages@v5
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build static site
-        run: npm run build
-        env:
-          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
-
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./out
-
   deploy:
-    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./redirect
+      - name: Deploy redirect to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
