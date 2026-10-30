@@ -70,7 +70,6 @@ export const mscModules = [
   "Machine Learning for Data Science",
   "Artificial Intelligence and AI Programming",
   "Natural Language Processing",
-  "Applied Machine Learning",
   "Research Ethics and Security",
 ];
 
@@ -104,7 +103,7 @@ export const academicProjects: AcademicProject[] = [
   // Example:
   // {
   //   title: "Customer churn prediction",
-  //   module: "Applied Machine Learning",
+  //   module: "Machine Learning for Data Science",
   //   problem: "Predict which customers are likely to leave a subscription service.",
   //   dataset: "Telco Customer Churn (Kaggle), 7,043 rows",
   //   methodology: "Cleaned and encoded features, compared models with 5-fold cross-validation.",

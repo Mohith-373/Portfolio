@@ -418,16 +418,16 @@ export function HeroPlayground() {
             <span className="absolute inline-flex size-full animate-ping rounded-full bg-[#14b3a3] opacity-60 motion-reduce:hidden" />
             <span className="relative inline-flex size-2 rounded-full bg-[#14b3a3]" />
           </span>
-          Live clustering
+          Live k-means clustering
         </p>
         <div className="flex items-center gap-1.5">
-          <button type="button" className={button} onClick={() => setK((v) => Math.max(MIN_K, v - 1))} disabled={k <= MIN_K} aria-label="Fewer clusters">
+          <button type="button" className={button} onClick={() => setK((v) => Math.max(MIN_K, v - 1))} disabled={k <= MIN_K} aria-label="Fewer groups">
             <Minus className="size-4" aria-hidden="true" />
           </button>
-          <span className="min-w-[3.25rem] text-center text-sm tabular-nums text-fg" aria-live="polite">
-            k = {k}
+          <span className="min-w-[4.5rem] text-center text-sm tabular-nums text-fg" aria-live="polite">
+            {k} groups
           </span>
-          <button type="button" className={button} onClick={() => setK((v) => Math.min(MAX_K, v + 1))} disabled={k >= MAX_K} aria-label="More clusters">
+          <button type="button" className={button} onClick={() => setK((v) => Math.min(MAX_K, v + 1))} disabled={k >= MAX_K} aria-label="More groups">
             <Plus className="size-4" aria-hidden="true" />
           </button>
           <button type="button" className={`${button} ml-1.5`} onClick={reset} aria-label="Shuffle the data">
@@ -439,13 +439,17 @@ export function HeroPlayground() {
       <canvas
         ref={canvasRef}
         role="img"
-        aria-label={`Animated k-means clustering of ${count} data points into ${k} clusters. Move the pointer over it to stir the points, or click to add more.`}
+        aria-label={`Animated k-means clustering of ${count} dots into ${k} groups. Move the pointer over it to scatter the dots, or click to add more.`}
         className="mt-3 aspect-[4/3] w-full cursor-crosshair touch-pan-y rounded-xl bg-bg"
       />
 
-      <p className="mt-3 flex items-center justify-between gap-3 text-sm text-muted">
-        <span>{touch ? "Drag through the data. Tap to add points." : "Move through the data to stir it. Click to add points."}</span>
-        <span className="shrink-0 tabular-nums text-subtle">{count} points</span>
+      <p className="mt-3 text-sm leading-relaxed text-muted">
+        The algorithm sorts the dots into {k} groups by colour. Each <span className="font-medium text-fg">⊕</span> is a
+        group&apos;s centre, and it keeps moving to the middle of its dots.
+      </p>
+      <p className="mt-1.5 flex items-center justify-between gap-3 text-sm text-subtle">
+        <span>{touch ? "Drag to scatter the dots. Tap to add more." : "Move your mouse to scatter the dots. Click to add more."}</span>
+        <span className="shrink-0 tabular-nums">{count} dots</span>
       </p>
     </div>
   );
