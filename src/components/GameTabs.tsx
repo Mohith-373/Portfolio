@@ -49,7 +49,7 @@ export function GameHeader({
         </span>
         {shortTitle ? (
           <span className="truncate">
-            <span className="@sm:hidden">{shortTitle}</span>
+            <span className="text-sm @sm:hidden">{shortTitle}</span>
             <span className="hidden @sm:inline">{title}</span>
           </span>
         ) : (

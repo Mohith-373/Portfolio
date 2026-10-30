@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { HeroDigitGame } from "./HeroDigitGame";
-import { HeroMindsetGame } from "./HeroMindsetGame";
 import { HeroPlayground } from "./HeroPlayground";
+import { HeroWorkWithMe } from "./HeroWorkWithMe";
 
 // A carousel for the hero games. Both games stay mounted (so a drawing
 // survives a slide), stacked in one grid cell; only the active slide is visible
@@ -13,7 +13,7 @@ import { HeroPlayground } from "./HeroPlayground";
 const games = [
   { id: "digits", label: "Draw a digit" },
   { id: "clustering", label: "Live clustering" },
-  { id: "mindset", label: "Think like me?" },
+  { id: "work", label: "Work with me?" },
 ] as const;
 
 export function HeroGames() {
@@ -48,7 +48,7 @@ export function HeroGames() {
               ) : game.id === "clustering" ? (
                 <HeroPlayground active={isActive} />
               ) : (
-                <HeroMindsetGame />
+                <HeroWorkWithMe />
               )}
             </div>
           );

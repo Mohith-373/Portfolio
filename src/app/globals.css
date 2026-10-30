@@ -89,8 +89,8 @@ summary::-webkit-details-marker {
   display: none;
 }
 
-/* "Do you think like me?" game: step transitions, answer tick and score fill. */
-@keyframes mindset-in-forward {
+/* "Do you like to work with someone like me?" game: step transitions, answer tick, replies. */
+@keyframes survey-in-forward {
   from {
     opacity: 0;
     transform: translateX(16px);
@@ -100,7 +100,7 @@ summary::-webkit-details-marker {
     transform: none;
   }
 }
-@keyframes mindset-in-back {
+@keyframes survey-in-back {
   from {
     opacity: 0;
     transform: translateX(-16px);
@@ -110,7 +110,7 @@ summary::-webkit-details-marker {
     transform: none;
   }
 }
-@keyframes mindset-pop {
+@keyframes survey-pop {
   from {
     opacity: 0;
     transform: scale(0.4);
@@ -120,12 +120,14 @@ summary::-webkit-details-marker {
     transform: scale(1);
   }
 }
-@keyframes mindset-fill {
+@keyframes survey-rise {
   from {
-    transform: scaleX(0);
+    opacity: 0;
+    transform: translateY(6px);
   }
   to {
-    transform: scaleX(1);
+    opacity: 1;
+    transform: none;
   }
 }
 
