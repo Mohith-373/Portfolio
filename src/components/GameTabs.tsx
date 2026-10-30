@@ -6,15 +6,18 @@ import { Info, Play } from "lucide-react";
 export type GameTab = "play" | "info";
 
 // Shared header for the hero games: a title with a live dot, and Play / How it works tabs.
+// shortTitle (optional) replaces the title on narrow cards; it needs an @container ancestor.
 export function GameHeader({
   baseId,
   title,
+  shortTitle,
   dotClass,
   tab,
   onTab,
 }: {
   baseId: string;
   title: string;
+  shortTitle?: string;
   dotClass: string;
   tab: GameTab;
   onTab: (tab: GameTab) => void;
@@ -44,7 +47,14 @@ export function GameHeader({
           <span className={`absolute inline-flex size-full animate-ping rounded-full opacity-50 motion-reduce:hidden ${dotClass}`} />
           <span className={`relative inline-flex size-2 rounded-full ${dotClass}`} />
         </span>
-        <span className="truncate">{title}</span>
+        {shortTitle ? (
+          <span className="truncate">
+            <span className="@sm:hidden">{shortTitle}</span>
+            <span className="hidden @sm:inline">{title}</span>
+          </span>
+        ) : (
+          <span className="truncate">{title}</span>
+        )}
       </p>
       <div role="tablist" aria-label={title} className="inline-flex shrink-0 rounded-lg bg-surface-2 p-0.5">
         {tabs.map(({ id, label, icon: Icon }) => (

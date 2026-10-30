@@ -97,7 +97,9 @@ The button then changes to **Send message** and shows success or error feedback.
 
 ## The hero games
 
-The hero has a slider with two games, each with Play and How it works tabs (`src/components/HeroGames.tsx`, `GameTabs.tsx`). Live clustering (`HeroPlayground.tsx`) is k-means written from scratch on a canvas; it pauses when it is not the visible slide.
+The hero has a slider with three games, each with Play and How it works tabs (`src/components/HeroGames.tsx`, `GameTabs.tsx`). Live clustering (`HeroPlayground.tsx`) is k-means written from scratch on a canvas; it pauses when it is not the visible slide.
+
+"Do you think like me?" (`HeroMindsetGame.tsx`) is the last slide: three questions on determination, curiosity and resilience, then a scored result. Questions, scoring and result text live in `src/lib/mindset.ts`; change `MY_ANSWERS` there if your own answers change. Answers are kept in memory only and never stored.
 
 The Draw a digit game is a small convolutional neural network (about 52,000 weights) trained on MNIST, running in the browser with no ML library.
 

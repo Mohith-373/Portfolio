@@ -3,15 +3,17 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { HeroDigitGame } from "./HeroDigitGame";
+import { HeroMindsetGame } from "./HeroMindsetGame";
 import { HeroPlayground } from "./HeroPlayground";
 
-// A two-slide carousel for the hero games. Both games stay mounted (so a drawing
+// A carousel for the hero games. Both games stay mounted (so a drawing
 // survives a slide), stacked in one grid cell; only the active slide is visible
 // and focusable, and the clustering animation pauses while it is off screen.
 
 const games = [
   { id: "digits", label: "Draw a digit" },
   { id: "clustering", label: "Live clustering" },
+  { id: "mindset", label: "Think like me?" },
 ] as const;
 
 export function HeroGames() {
@@ -22,7 +24,7 @@ export function HeroGames() {
     "inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-line bg-surface text-fg transition-colors hover:bg-surface-2";
 
   return (
-    <div aria-roledescription="carousel" aria-label="Interactive demos" data-games data-index={index}>
+    <div aria-roledescription="carousel" aria-label="Interactive demos" data-games data-index={index} className="@container">
       <div className="grid overflow-hidden rounded-2xl">
         {games.map((game, i) => {
           const isActive = i === index;
@@ -41,7 +43,13 @@ export function HeroGames() {
                 visibility: isActive ? "visible" : "hidden",
               }}
             >
-              {game.id === "digits" ? <HeroDigitGame /> : <HeroPlayground active={isActive} />}
+              {game.id === "digits" ? (
+                <HeroDigitGame />
+              ) : game.id === "clustering" ? (
+                <HeroPlayground active={isActive} />
+              ) : (
+                <HeroMindsetGame />
+              )}
             </div>
           );
         })}
@@ -63,7 +71,8 @@ export function HeroGames() {
               }`}
             >
               <span className={`size-1.5 rounded-full ${i === index ? "bg-accent" : "bg-line-strong"}`} aria-hidden="true" />
-              {game.label}
+              {/* On narrow cards only the current game is named; the others show as dots. */}
+              <span className={i === index ? "" : "sr-only @md:not-sr-only"}>{game.label}</span>
             </button>
           ))}
         </div>
