@@ -2,10 +2,10 @@
 
 Personal portfolio for an MSc Data Science student at the University of Surrey, built for UK placement applications.
 
-Live site: https://mohith-373.github.io/Portfolio/
+Live site: https://mohith-tk.pages.dev
 
 - **Stack:** Next.js 16 (static export), React 19, TypeScript, Tailwind CSS 4, Lucide icons, Geist font
-- **Hosting:** GitHub Pages, deployed by GitHub Actions on every push to `main`
+- **Hosting:** Cloudflare Pages (`mohith-tk.pages.dev`), which builds and deploys on every push to `main`
 - **Runtime dependencies:** five (`next`, `react`, `react-dom`, `lucide-react`, `geist`). No analytics, trackers or external scripts.
 
 ## Folder structure
@@ -48,13 +48,22 @@ npm run build        # static site written to ./out
 npm run typecheck
 ```
 
-## Deploy to GitHub Pages (one-time setup)
+## Deploy to Cloudflare Pages (one-time setup)
 
-1. Replace the old `index.html` in the `Portfolio` repository with the contents of this folder. The old version stays in the Git history.
-2. On GitHub, open the repository's **Settings → Pages** and set **Source** to **GitHub Actions**.
-3. Push to `main`. The **Deploy portfolio to GitHub Pages** workflow builds and publishes the site in about two minutes. Progress shows in the **Actions** tab.
+1. Sign in at https://dash.cloudflare.com (the free plan is enough).
+2. Go to **Workers & Pages → Create application → Pages → Connect to Git**, authorise GitHub and pick the `Portfolio` repository.
+3. Set **Project name** to `mohith-tk`. This gives the address `mohith-tk.pages.dev`.
+4. Build settings:
+   - Production branch: `main`
+   - Framework preset: **Next.js (Static HTML Export)**
+   - Build command: `npm run build`
+   - Build output directory: `out`
+   - Environment variable: `NODE_VERSION` = `22` (the repo's `.nvmrc` says the same)
+5. Select **Save and Deploy**. After the first build, every push to `main` redeploys in about two minutes.
 
-After that, every push to `main` redeploys automatically.
+To use your own domain later (for example `mohithtk.co.uk`), add it under the project's **Custom domains** tab, then change `url` in `src/content/site.ts`.
+
+The old GitHub Pages address (`mohith-373.github.io/Portfolio`) is kept only as a redirect to the Cloudflare address, so links already shared keep working.
 
 ## Updating content
 

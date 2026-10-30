@@ -21,7 +21,8 @@ export const site = {
   sourceRepo: "https://github.com/Mohith-373/Portfolio",
 
   // Public address of the deployed site (no trailing slash). Used for canonical and share links.
-  url: "https://mohith-373.github.io/Portfolio",
+  // Hosted on Cloudflare Pages; the old GitHub Pages address redirects here.
+  url: "https://mohith-tk.pages.dev",
 
   // Your CV lives in public/cv/. Replace the PDF there and keep this file name,
   // or change this path to match the new file.
