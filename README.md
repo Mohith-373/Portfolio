@@ -86,9 +86,11 @@ Export the new CV as a PDF and save it over `public/cv/Mohith-Thuraiyur-Kirubana
 
 The button then changes to **Send message** and shows success or error feedback.
 
-## The "Draw a digit" game
+## The hero games
 
-The hero game is a small convolutional neural network (about 52,000 weights) trained on MNIST, running in the browser with no ML library.
+The hero has a slider with two games, each with Play and How it works tabs (`src/components/HeroGames.tsx`, `GameTabs.tsx`). Live clustering (`HeroPlayground.tsx`) is k-means written from scratch on a canvas; it pauses when it is not the visible slide.
+
+The Draw a digit game is a small convolutional neural network (about 52,000 weights) trained on MNIST, running in the browser with no ML library.
 
 - Model weights: `public/models/digits.json` (about 280 KB, loaded after the page)
 - Browser inference and MNIST-style preprocessing: `src/lib/digitModel.ts`
@@ -121,4 +123,6 @@ These checks were run in Chromium against the production build, served under `/P
 - External links open in a new tab with `rel="noopener noreferrer"`
 - Contact form: field errors show, focus moves to the first invalid field, and a valid message opens the email app with subject and body filled in
 - Keyboard: "Skip to content" is the first tab stop, focus outlines are visible, and the mobile menu closes with Escape; picking a section in the mobile menu closes it and scrolls to that section
+- Game slider: arrows and labels switch games, the hidden game can't be focused, and clustering pauses while hidden
 - Draw-a-digit game: drawn digits are recognised in the browser, the Example and Clear buttons work, and the How it works tab opens and closes
+- Live clustering: animates, responds to the pointer, adds dots on click, changes the number of groups, and has its own How it works tab

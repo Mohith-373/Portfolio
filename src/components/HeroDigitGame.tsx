@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
-import { Eraser, Info, Pencil, Sparkles } from "lucide-react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { Eraser, Pencil, Sparkles } from "lucide-react";
 import { classify, parseModel, toMnist, type DigitModel } from "@/lib/digitModel";
 import { withBase } from "@/lib/paths";
+import { GameHeader, type GameTab } from "./GameTabs";
 
 // "Draw a digit": visitors draw 0-9 and a small convolutional neural network,
 // running in the browser, guesses it live. Two tabs: Play, and How it works.
@@ -12,11 +13,10 @@ const INK_SIZE = 280; // resolution of the hidden drawing the model reads
 const TRAINING_CODE = "https://github.com/Mohith-373/Portfolio/blob/main/scripts/train_digits.py";
 
 type Stroke = { x: number; y: number }[];
-type Tab = "play" | "info";
 
 export function HeroDigitGame() {
   const baseId = useId();
-  const [tab, setTab] = useState<Tab>("play");
+  const [tab, setTab] = useState<GameTab>("play");
   const [model, setModel] = useState<DigitModel | null>(null);
   const [loadError, setLoadError] = useState(false);
   const [probs, setProbs] = useState<number[] | null>(null);
@@ -248,66 +248,15 @@ export function HeroDigitGame() {
     runModel();
   }
 
-  function onTabKey(e: KeyboardEvent<HTMLButtonElement>) {
-    if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
-      e.preventDefault();
-      const next: Tab = tab === "play" ? "info" : "play";
-      setTab(next);
-      document.getElementById(`${baseId}-tab-${next}`)?.focus();
-    }
-  }
-
   const best = probs ? probs.indexOf(Math.max(...probs)) : -1;
   const confidence = probs ? probs[best] : 0;
 
-  const tabClass = (active: boolean) =>
-    `inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-sm transition-colors ${
-      active ? "bg-surface text-fg shadow-sm" : "text-muted hover:text-fg"
-    }`;
   const actionClass =
     "inline-flex items-center gap-1.5 rounded-md border border-line px-3 py-1.5 text-sm font-medium text-fg transition-colors hover:bg-surface-2 disabled:opacity-40 disabled:hover:bg-transparent";
 
   return (
-    <div className="rounded-2xl border border-line bg-surface p-4 sm:p-5" data-game="digits" data-guess={best} data-tab={tab}>
-      <div className="flex items-center justify-between gap-3">
-        <p className="inline-flex items-center gap-2 font-medium text-fg">
-          <span className="relative flex size-2" aria-hidden="true">
-            <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-50 motion-reduce:hidden" />
-            <span className="relative inline-flex size-2 rounded-full bg-accent" />
-          </span>
-          Draw a digit
-        </p>
-        <div role="tablist" aria-label="Draw a digit game" className="inline-flex rounded-lg bg-surface-2 p-0.5">
-          <button
-            type="button"
-            role="tab"
-            id={`${baseId}-tab-play`}
-            aria-selected={tab === "play"}
-            aria-controls={`${baseId}-panel-play`}
-            tabIndex={tab === "play" ? 0 : -1}
-            onKeyDown={onTabKey}
-            onClick={() => setTab("play")}
-            className={tabClass(tab === "play")}
-          >
-            <Pencil className="size-3.5" aria-hidden="true" />
-            Play
-          </button>
-          <button
-            type="button"
-            role="tab"
-            id={`${baseId}-tab-info`}
-            aria-selected={tab === "info"}
-            aria-controls={`${baseId}-panel-info`}
-            tabIndex={tab === "info" ? 0 : -1}
-            onKeyDown={onTabKey}
-            onClick={() => setTab("info")}
-            className={tabClass(tab === "info")}
-          >
-            <Info className="size-3.5" aria-hidden="true" />
-            How it works
-          </button>
-        </div>
-      </div>
+    <div className="h-full rounded-2xl border border-line bg-surface p-4 sm:p-5" data-game="digits" data-guess={best} data-tab={tab}>
+      <GameHeader baseId={baseId} title="Draw a digit" dotClass="bg-accent" tab={tab} onTab={setTab} />
 
       {/* Play */}
       <div role="tabpanel" id={`${baseId}-panel-play`} aria-labelledby={`${baseId}-tab-play`} hidden={tab !== "play"} className="mt-3">
