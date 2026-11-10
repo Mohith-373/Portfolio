@@ -5,6 +5,8 @@
 export interface SkillGroup {
   area: string;
   items: string[];
+  /** Topics being studied, not yet used in a project. Shown apart from `items`. */
+  learning?: string[];
   appliedIn: string[];
 }
 
@@ -17,7 +19,7 @@ export const skillGroups: SkillGroup[] = [
   {
     area: "Data analysis",
     items: ["pandas", "NumPy", "Data cleaning", "Exploratory data analysis", "Statistical analysis"],
-    appliedIn: ["stroke-prediction"],
+    appliedIn: ["nifty-drawdown-alert", "stroke-prediction"],
   },
   {
     area: "Data visualisation",
@@ -33,10 +35,9 @@ export const skillGroups: SkillGroup[] = [
       "scikit-learn",
       "CNNs",
       "Natural language processing",
-      "Large language models",
-      "Retrieval-augmented generation",
     ],
-    appliedIn: ["fake-news-detection", "stroke-prediction"],
+    learning: ["Large language models", "Retrieval-augmented generation"],
+    appliedIn: ["stroke-prediction"],
   },
   {
     area: "Databases",

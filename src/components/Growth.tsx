@@ -1,4 +1,5 @@
-import { Award, BookOpen, Cpu, Dumbbell, Mountain, type LucideIcon } from "lucide-react";
+import type { CSSProperties } from "react";
+import { Award, BookOpen, Dumbbell, Mountain, type LucideIcon } from "lucide-react";
 import {
   beyondTechnology,
   certifications,
@@ -16,10 +17,12 @@ export function Exploring() {
       title="Currently building & exploring"
       lead={`What I'm working on alongside my lectures. Last updated ${site.lastUpdated}.`}
     >
-      <ul className="grid gap-x-10 sm:grid-cols-2">
-        {currentlyExploring.map((item) => (
-          <li key={item} className="flex items-start gap-3 border-b border-line py-3.5 text-fg/90">
-            <span className="mt-[0.45rem] size-2 shrink-0 rounded-full border-2 border-accent" aria-hidden="true" />
+      <ul className="grid gap-3 sm:grid-cols-2">
+        {currentlyExploring.map((item, i) => (
+          <li key={item} data-reveal style={{ "--i": i % 2 } as CSSProperties} className="card flex items-baseline gap-3.5 px-4 py-3.5 text-fg/90">
+            <span className="font-mono text-xs tabular-nums text-accent" aria-hidden="true">
+              {String(i + 1).padStart(2, "0")}
+            </span>
             {item}
           </li>
         ))}
@@ -100,10 +103,10 @@ export function Experience() {
       title="Academic & independent experience"
       lead="Coursework, academic and independent work. None of it is paid employment."
     >
-      <ol className="divide-y divide-line border-y border-line">
+      <ol data-reveal className="card divide-y divide-line px-5 sm:px-8">
         {experience.map((item) => (
           <li key={item.title + item.period} className="grid gap-2 py-6 sm:grid-cols-[9rem_1fr] sm:gap-6">
-            <p className="text-sm tabular-nums text-subtle">{item.period}</p>
+            <p className="pt-0.5 font-mono text-xs tabular-nums text-subtle">{item.period}</p>
             <div>
               <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span className="font-medium text-fg">{item.title}</span>
@@ -121,20 +124,35 @@ export function Experience() {
 const beyondIcons: Record<(typeof beyondTechnology)[number]["icon"], LucideIcon> = {
   dumbbell: Dumbbell,
   mountain: Mountain,
-  cpu: Cpu,
   book: BookOpen,
 };
 
 export function Beyond() {
   return (
-    <Section id="beyond" title="Beyond technology">
-      <ul className="flex flex-wrap gap-x-10 gap-y-4 pt-1">
-        {beyondTechnology.map((item) => {
+    <Section id="beyond" title="Beyond technology" lead="What I do away from a screen.">
+      <ul className="grid gap-4 sm:grid-cols-3">
+        {beyondTechnology.map((item, i) => {
           const Icon = beyondIcons[item.icon];
           return (
-            <li key={item.label} className="inline-flex items-center gap-2.5 text-fg/90">
-              <Icon className="size-[1.1rem] text-muted" strokeWidth={1.75} aria-hidden="true" />
-              {item.label}
+            <li
+              key={item.label}
+              data-reveal
+              data-spot
+              style={{ "--i": i } as CSSProperties}
+              className="card card-hover group flex min-h-44 flex-col justify-between p-5 sm:p-6"
+            >
+              <div className="flex items-start justify-between">
+                <span
+                  className="grid size-11 place-items-center rounded-xl border border-accent/20 bg-accent-soft text-accent transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-110"
+                  aria-hidden="true"
+                >
+                  <Icon className="size-5" strokeWidth={1.75} />
+                </span>
+                <span className="eyebrow text-subtle" aria-hidden="true">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+              </div>
+              <p className="mt-8 text-xl font-medium leading-snug tracking-[-0.02em] text-fg">{item.label}</p>
             </li>
           );
         })}

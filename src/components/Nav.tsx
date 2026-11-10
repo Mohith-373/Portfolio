@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { Download, Menu, X } from "lucide-react";
 import { navItems, site } from "@/content/site";
 import { withBase } from "@/lib/paths";
@@ -10,6 +10,8 @@ export function Nav() {
   const [active, setActive] = useState<string>("home");
   const [open, setOpen] = useState(false);
   const [pendingTarget, setPendingTarget] = useState<string | null>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+  const [pill, setPill] = useState<{ x: number; width: number } | null>(null);
 
   // Scroll to a section picked in the mobile menu only after the menu has closed
   // and page scrolling is unlocked, so the target position is measured correctly.
@@ -38,6 +40,21 @@ export function Nav() {
     return () => observer.disconnect();
   }, []);
 
+  // Desktop: one highlight slides between links instead of each link switching on and off.
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+    const measure = () => {
+      // Each link sits in its own positioned <li>, so the offset comes from that item.
+      const item = list.querySelector<HTMLElement>(`a[href="#${active}"]`)?.parentElement;
+      setPill(item ? { x: item.offsetLeft, width: item.offsetWidth } : null);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(list);
+    return () => ro.disconnect();
+  }, [active]);
+
   // Close the mobile menu with Escape, and stop the page scrolling behind it.
   useEffect(() => {
     if (!open) return;
@@ -54,22 +71,38 @@ export function Nav() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-line bg-bg/85 backdrop-blur-md">
-        <nav aria-label="Main" className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-          <a href="#home" className="text-[0.95rem] font-semibold tracking-tight text-fg">
+      {/* Phones and tablets: a solid full-width bar (a blurred sticky bar is the costliest thing
+          to repaint while scrolling). Desktop: a floating glass pill. */}
+      <header className="sticky top-0 z-50 border-b border-line bg-bg pt-[env(safe-area-inset-top)] lg:pointer-events-none lg:border-b-0 lg:bg-transparent lg:pt-3">
+        <nav
+          aria-label="Main"
+          className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:pointer-events-auto lg:h-14 lg:w-[calc(100%-3rem)] lg:max-w-5xl lg:rounded-full lg:border lg:border-line lg:bg-surface/70 lg:pl-5 lg:pr-2.5 lg:shadow-[var(--shadow-float)] lg:backdrop-blur-xl"
+        >
+          <a href="#home" className="tap inline-flex items-center gap-2.5 text-[0.95rem] font-semibold tracking-tight text-fg">
+            <span
+              className="grid size-7 place-items-center rounded-lg bg-gradient-to-br from-accent to-accent-2 text-[0.8125rem] font-bold text-on-accent"
+              aria-hidden="true"
+            >
+              M
+            </span>
             {site.shortName}
           </a>
 
-          <ul className="hidden items-center gap-1 lg:flex">
+          <ul ref={listRef} className="relative hidden items-center gap-0.5 lg:flex">
+            <li
+              aria-hidden="true"
+              className="nav-pill pointer-events-none absolute inset-y-0 left-0 rounded-full bg-surface-2 ring-1 ring-inset ring-line"
+              style={{ transform: `translateX(${pill?.x ?? 0}px)`, width: pill?.width ?? 0, opacity: pill ? 1 : 0 }}
+            />
             {navItems.map((item) => {
               const isActive = active === item.id;
               return (
-                <li key={item.id}>
+                <li key={item.id} className="relative">
                   <a
                     href={`#${item.id}`}
                     aria-current={isActive ? "location" : undefined}
-                    className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
-                      isActive ? "bg-surface-2 text-fg" : "text-muted hover:text-fg"
+                    className={`block rounded-full px-3 py-1.5 text-sm transition-colors duration-300 ${
+                      isActive ? "font-medium text-fg" : "text-muted hover:text-fg"
                     }`}
                   >
                     {item.label}
@@ -79,19 +112,20 @@ export function Nav() {
             })}
           </ul>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <ThemeToggle />
             <a
               href={withBase(site.cvPath)}
               download
-              className="hidden items-center gap-2 rounded-md border border-line-strong px-3 py-1.5 text-sm font-medium text-fg transition-colors hover:bg-surface-2 sm:inline-flex"
+              data-magnetic
+              className="hidden items-center gap-2 rounded-full bg-fg px-3.5 py-1.5 text-sm font-medium text-bg transition-opacity hover:opacity-85 sm:inline-flex"
             >
               <Download className="size-4" aria-hidden="true" />
               Download CV
             </a>
             <button
               type="button"
-              className="inline-flex size-9 items-center justify-center rounded-md text-fg hover:bg-surface-2 lg:hidden"
+              className="tap inline-flex size-9 items-center justify-center rounded-full text-fg transition-colors hover:bg-surface-2 lg:hidden"
               aria-expanded={open}
               aria-controls="mobile-menu"
               aria-label={open ? "Close menu" : "Open menu"}
@@ -105,10 +139,13 @@ export function Nav() {
 
       {/* Outside the header: its backdrop blur would otherwise contain this fixed panel. */}
       {open ? (
-        <div id="mobile-menu" className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto bg-bg lg:hidden">
-          <ul className="mx-auto max-w-6xl px-4 py-4 sm:px-6">
-            {navItems.map((item) => (
-              <li key={item.id}>
+        <div
+          id="mobile-menu"
+          className="fixed inset-x-0 bottom-0 top-[calc(4rem+env(safe-area-inset-top))] z-40 flex flex-col overflow-y-auto overscroll-contain bg-bg pb-[env(safe-area-inset-bottom)] motion-safe:animate-[menu-in_0.25s_ease-out] lg:hidden"
+        >
+          <ul className="mx-auto w-full max-w-6xl flex-1 px-4 py-4 sm:px-6">
+            {navItems.map((item, i) => (
+              <li key={item.id} className="menu-link" style={{ "--i": i } as CSSProperties}>
                 <a
                   href={`#${item.id}`}
                   onClick={(event) => {
@@ -117,18 +154,23 @@ export function Nav() {
                     setOpen(false);
                   }}
                   aria-current={active === item.id ? "location" : undefined}
-                  className={`block border-b border-line py-4 text-lg ${active === item.id ? "text-fg" : "text-muted"}`}
+                  className={`flex items-baseline gap-4 border-b border-line py-4 text-[1.75rem] font-medium tracking-[-0.03em] ${
+                    active === item.id ? "text-fg" : "text-muted"
+                  }`}
                 >
+                  <span className="eyebrow w-6 text-accent" aria-hidden="true">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
                   {item.label}
                 </a>
               </li>
             ))}
           </ul>
-          <div className="mx-auto max-w-6xl px-4 pb-8 sm:px-6">
+          <div className="menu-link mx-auto w-full max-w-6xl px-4 pb-8 sm:px-6" style={{ "--i": navItems.length } as CSSProperties}>
             <a
               href={withBase(site.cvPath)}
               download
-              className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-accent px-4 py-3 text-sm font-medium text-on-accent"
+              className="btn-primary tap inline-flex w-full items-center justify-center gap-2 rounded-full px-4 py-3 text-sm font-medium"
             >
               <Download className="size-4" aria-hidden="true" />
               Download CV

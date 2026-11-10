@@ -2,7 +2,7 @@
 // experience and personal interests. Edit the arrays below to update the site.
 
 export const about = [
-  "I studied Artificial Intelligence and Data Science at Rathinam College of Arts and Science in Coimbatore, where my projects ranged from fake news detection and stroke-risk prediction to an encrypted vehicle black box. In 2026 I moved to the UK to begin an MSc in Data Science at the University of Surrey.",
+  "I studied Artificial Intelligence and Data Science at Rathinam College of Arts and Science in Coimbatore, where my projects included stroke-risk prediction and an encrypted vehicle black box. In 2026 I moved to the UK to begin an MSc in Data Science at the University of Surrey.",
   "I'm most interested in analytical problem-solving: understanding a complex dataset, finding the patterns that matter, building predictive models and checking whether the results hold up statistically. I want to apply that to real problems, especially in healthcare and safety.",
   "Alongside my studies I build independent projects, from a market drawdown alert system to backend services, to practise the engineering side of working with data. I'm looking for a placement in data science, data analytics, machine learning or AI in the UK.",
 ];
@@ -83,7 +83,7 @@ export const bscAreas = [
   "predictive analytics",
 ];
 
-export const englishTest = "IELTS 6.5";
+export const englishTest = "IELTS Academic, overall band 6.5 (March 2026)";
 
 // Add academic coursework write-ups here as you complete them. Leave a field
 // out (or empty) if it doesn't apply; empty fields are not shown.
@@ -165,19 +165,12 @@ export const experience = [
     period: "2023 – 2026",
     kind: "BSc academic",
     title: "Rathinam College of Arts and Science",
-    text: "Academic projects in fake news detection with a CNN, stroke-risk prediction and an encrypted IoT vehicle black box.",
-  },
-  {
-    period: "2025",
-    kind: "Team project",
-    title: "Naan Mudhalvan programme",
-    text: "Contributed to a team-built Salesforce app for medical inventory management.",
+    text: "Academic projects in stroke-risk prediction and an encrypted IoT vehicle black box.",
   },
 ];
 
 export const beyondTechnology = [
-  { icon: "dumbbell", label: "Fitness and strength training" },
   { icon: "mountain", label: "Trekking and outdoor exploration" },
-  { icon: "cpu", label: "Technology and innovation" },
-  { icon: "book", label: "Continuous learning" },
+  { icon: "dumbbell", label: "Bodybuilding and strength training" },
+  { icon: "book", label: "Personal development and continuous learning" },
 ] as const;

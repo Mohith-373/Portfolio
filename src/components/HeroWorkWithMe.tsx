@@ -15,11 +15,11 @@ type Step = (typeof STEPS)[number];
 const LETTERS = ["A", "B", "C", "D"];
 
 const primary =
-  "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md bg-accent px-4 py-2 text-sm font-medium text-on-accent transition-[background-color,opacity] hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-accent";
+  "tap inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md bg-accent px-4 py-2 text-sm font-medium text-on-accent transition-[background-color,opacity] hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-accent";
 const ghost =
-  "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-surface-2 hover:text-fg";
+  "tap inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-surface-2 hover:text-fg";
 const outline =
-  "inline-flex items-center gap-1.5 rounded-md border border-line px-3 py-1.5 text-sm font-medium text-fg transition-colors hover:bg-surface-2";
+  "tap inline-flex items-center gap-1.5 rounded-md border border-line px-3 py-1.5 text-sm font-medium text-fg transition-colors hover:bg-surface-2";
 const overline = "text-xs font-medium uppercase tracking-[0.14em] text-subtle";
 
 export function HeroWorkWithMe() {

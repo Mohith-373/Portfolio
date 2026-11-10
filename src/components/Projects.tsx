@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ChevronDown, ExternalLink } from "lucide-react";
+import { ArrowUpRight, ChevronDown } from "lucide-react";
 import { categories, projects, type Category, type Project } from "@/content/projects";
 import { GitHubIcon } from "./BrandIcons";
+import { ProjectVisual } from "./ProjectVisual";
 import { Section } from "./Section";
 
 type Filter = "All" | Category;
@@ -35,10 +36,10 @@ export function Projects() {
   return (
     <Section
       id="projects"
-      title="Featured projects"
-      lead="Coursework, independent and undergraduate projects, strongest first. Open a project to read the full case study."
+      title="Selected projects"
+      lead="Academic, coursework and independent projects. Each one states what it is, what I did, and where it stands today."
     >
-      <div role="group" aria-label="Filter projects by category" className="-mx-1 flex flex-wrap gap-2">
+      <div data-reveal role="group" aria-label="Filter projects by category" className="-mx-1 flex flex-wrap gap-2">
         {(["All", ...categories] as Filter[])
           .filter((c) => c === "All" || (counts.get(c) ?? 0) > 0)
           .map((c) => {
@@ -49,14 +50,14 @@ export function Projects() {
                 type="button"
                 aria-pressed={selected}
                 onClick={() => setFilter(c)}
-                className={`rounded-full border px-3 py-1 text-sm transition-colors ${
+                className={`tap inline-flex items-center rounded-full border px-3.5 py-1.5 text-sm transition-colors duration-300 ${
                   selected
-                    ? "border-fg bg-fg text-bg"
+                    ? "border-accent bg-accent font-medium text-on-accent"
                     : "border-line bg-surface text-muted hover:border-line-strong hover:text-fg"
                 }`}
               >
                 {c}
-                <span className={`ml-1.5 tabular-nums ${selected ? "text-bg/70" : "text-subtle"}`}>
+                <span className={`ml-1.5 tabular-nums ${selected ? "opacity-70" : "text-subtle"}`}>
                   {c === "All" ? projects.length : counts.get(c)}
                 </span>
               </button>
@@ -67,122 +68,101 @@ export function Projects() {
         Showing {shown.length} {shown.length === 1 ? "project" : "projects"}
       </p>
 
-      <div className="mt-8 grid gap-5 md:grid-cols-2">
+      <div className="mt-10 space-y-6 sm:space-y-8">
         {shown.map((project) => (
-          <ProjectCard key={project.slug} project={project} wide={filter === "All" && !!project.featured} />
+          <ProjectShowcase key={project.slug} project={project} number={projects.indexOf(project) + 1} />
         ))}
       </div>
     </Section>
   );
 }
 
-function ProjectCard({ project, wide }: { project: Project; wide: boolean }) {
-  const caseStudy = (
-    <details className="group mt-6 border-t border-line pt-4">
-      <summary className="inline-flex cursor-pointer items-center gap-1.5 rounded text-sm font-medium text-fg">
-        Read case study
-        <ChevronDown className="chevron size-4 text-muted transition-transform" aria-hidden="true" />
-      </summary>
-      <dl className="mt-4 space-y-5 text-[0.9375rem] leading-relaxed">
-        {!wide ? (
-          <>
-            <Field label="Problem">{project.problem}</Field>
-            <Field label="Objective">{project.objective}</Field>
-          </>
-        ) : null}
-        <Field label="My contribution">{project.contribution}</Field>
-        <Field label="Approach">
-          <List items={project.approach} />
-        </Field>
-        <Field label="Key technical decisions">
-          <List items={project.decisions} />
-        </Field>
-        {project.challenges?.length ? (
-          <Field label="Challenges">
-            <List items={project.challenges} />
-          </Field>
-        ) : null}
-        {project.results?.length ? (
-          <Field label="Results">
-            <List items={project.results} />
-          </Field>
-        ) : null}
-      </dl>
-    </details>
-  );
-
-  const header = (
-    <>
-      <p className="flex items-baseline justify-between gap-4 text-sm text-muted">
-        <span>{project.context}</span>
-        <span className="tabular-nums text-subtle">{project.year}</span>
-      </p>
-      <h3 className="mt-3 text-lg font-semibold tracking-[-0.015em] text-fg sm:text-xl">{project.title}</h3>
-      <p className="mt-2 leading-relaxed text-muted">{project.summary}</p>
-      <ul className="mt-4 flex flex-wrap gap-1.5" aria-label="Technologies">
-        {project.stack.map((tech) => (
-          <li key={tech} className="rounded-md bg-surface-2 px-2 py-0.5 text-[0.8125rem] text-muted">
-            {tech}
-          </li>
-        ))}
-      </ul>
-      {project.status ? (
-        <p className="mt-4 border-l-2 border-line-strong pl-3 text-sm leading-relaxed text-muted">{project.status}</p>
-      ) : null}
-      <Links project={project} />
-    </>
-  );
-
+// One project, presented like a product: a drawn preview on top, the essentials beside
+// the problem it solves, and the full case study behind a disclosure.
+function ProjectShowcase({ project, number }: { project: Project; number: number }) {
   return (
-    <article
-      id={`project-${project.slug}`}
-      className={`scroll-mt-24 rounded-xl border border-line bg-surface p-6 sm:p-7 ${wide ? "md:col-span-2" : ""}`}
-    >
-      {wide ? (
-        <div className="grid gap-8 md:grid-cols-[1.05fr_1fr] md:gap-10">
-          <div>{header}</div>
-          <div className="md:border-l md:border-line md:pl-10">
-            <dl className="space-y-5 text-[0.9375rem] leading-relaxed">
-              <Field label="Problem">{project.problem}</Field>
-              <Field label="Objective">{project.objective}</Field>
-            </dl>
-            {caseStudy}
-          </div>
+    <article id={`project-${project.slug}`} data-reveal data-spot className="card group/card scroll-mt-28 overflow-hidden">
+      <div data-tilt className="border-b border-line">
+        <div className="pv relative aspect-[16/8] sm:aspect-[16/6]">
+          <ProjectVisual slug={project.slug} />
+          <span className="eyebrow absolute left-5 top-5 text-subtle sm:left-8 sm:top-6" aria-hidden="true">
+            {String(number).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
+          </span>
+          <span className="eyebrow absolute right-5 top-5 tabular-nums text-subtle sm:right-8 sm:top-6">{project.year}</span>
         </div>
-      ) : (
-        <>
-          {header}
-          {caseStudy}
-        </>
-      )}
+      </div>
+
+      <div className="grid gap-8 p-5 sm:p-8 lg:grid-cols-[1.1fr_1fr] lg:gap-12">
+        <div>
+          <p className="eyebrow text-accent">{project.context}</p>
+          <h3 className="mt-3 text-2xl font-semibold leading-[1.1] tracking-[-0.03em] text-fg sm:text-[2rem]">{project.title}</h3>
+          <p className="mt-4 leading-relaxed text-muted">{project.summary}</p>
+          <ul className="mt-5 flex flex-wrap gap-1.5" aria-label="Technologies">
+            {project.stack.map((tech) => (
+              <li key={tech} className="rounded-md border border-line bg-surface-2/60 px-2 py-0.5 font-mono text-xs text-muted">
+                {tech}
+              </li>
+            ))}
+          </ul>
+          {project.status ? (
+            <p className="mt-5 border-l-2 border-accent/40 pl-3 text-sm leading-relaxed text-muted">{project.status}</p>
+          ) : null}
+          <Links project={project} />
+        </div>
+
+        <div>
+          <dl className="space-y-5 text-[0.9375rem] leading-relaxed">
+            <Field label="Problem">{project.problem}</Field>
+            <Field label="My contribution">{project.contribution}</Field>
+            {project.results?.length ? (
+              <Field label="Key outcomes">
+                <List items={project.results} />
+              </Field>
+            ) : null}
+          </dl>
+
+          <details className="mt-6 border-t border-line pt-4">
+            <summary className="tap inline-flex cursor-pointer items-center gap-1.5 rounded text-sm font-medium text-fg">
+              Read case study
+              <ChevronDown className="chevron size-4 text-muted transition-transform duration-300" aria-hidden="true" />
+            </summary>
+            <dl className="mt-4 space-y-5 text-[0.9375rem] leading-relaxed">
+              <Field label="Objective">{project.objective}</Field>
+              <Field label="Approach">
+                <List items={project.approach} />
+              </Field>
+              <Field label="Key technical decisions">
+                <List items={project.decisions} />
+              </Field>
+              {project.challenges?.length ? (
+                <Field label="Challenges">
+                  <List items={project.challenges} />
+                </Field>
+              ) : null}
+            </dl>
+          </details>
+        </div>
+      </div>
     </article>
   );
 }
 
 function Links({ project }: { project: Project }) {
   if (!project.repo && !project.demo) return null;
+  const link =
+    "tap group/link inline-flex items-center gap-2 rounded-full border border-line-strong bg-surface px-4 py-2 font-medium text-fg transition-colors duration-300 hover:border-accent/60 hover:text-accent";
   return (
-    <p className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+    <p className="mt-6 flex flex-wrap gap-2.5 text-sm">
       {project.repo ? (
-        <a
-          href={project.repo}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 font-medium text-fg underline decoration-line-strong underline-offset-4 hover:decoration-fg"
-        >
+        <a href={project.repo} target="_blank" rel="noopener noreferrer" data-magnetic className={link}>
           <GitHubIcon className="size-4" />
           View code<span className="sr-only"> for {project.title} on GitHub (opens in a new tab)</span>
         </a>
       ) : null}
       {project.demo ? (
-        <a
-          href={project.demo}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 font-medium text-fg underline decoration-line-strong underline-offset-4 hover:decoration-fg"
-        >
-          <ExternalLink className="size-4" aria-hidden="true" />
+        <a href={project.demo} target="_blank" rel="noopener noreferrer" data-magnetic className={link}>
           Live site<span className="sr-only"> for {project.title} (opens in a new tab)</span>
+          <ArrowUpRight className="size-4 transition-transform duration-300 group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5" aria-hidden="true" />
         </a>
       ) : null}
     </p>
@@ -192,8 +172,8 @@ function Links({ project }: { project: Project }) {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <dt className="text-sm font-medium text-fg">{label}</dt>
-      <dd className="mt-1 text-muted">{children}</dd>
+      <dt className="eyebrow text-subtle">{label}</dt>
+      <dd className="mt-1.5 text-muted">{children}</dd>
     </div>
   );
 }

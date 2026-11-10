@@ -5,7 +5,7 @@ import { Info, Play } from "lucide-react";
 
 export type GameTab = "play" | "info";
 
-// Shared header for the hero games: a title with a live dot, and Play / How it works tabs.
+// Shared header for the hero games: a title with a coloured dot, and Play / How it works tabs.
 // shortTitle (optional) replaces the title on narrow cards; it needs an @container ancestor.
 export function GameHeader({
   baseId,
@@ -31,7 +31,7 @@ export function GameHeader({
   }
 
   const tabClass = (active: boolean) =>
-    `inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-sm transition-colors ${
+    `tap inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-sm transition-colors ${
       active ? "bg-surface text-fg shadow-sm" : "text-muted hover:text-fg"
     }`;
 
@@ -43,10 +43,7 @@ export function GameHeader({
   return (
     <div className="flex items-center justify-between gap-3">
       <p className="inline-flex min-w-0 items-center gap-2 font-medium text-fg">
-        <span className="relative flex size-2 shrink-0" aria-hidden="true">
-          <span className={`absolute inline-flex size-full animate-ping rounded-full opacity-50 motion-reduce:hidden ${dotClass}`} />
-          <span className={`relative inline-flex size-2 rounded-full ${dotClass}`} />
-        </span>
+        <span className={`size-2 shrink-0 rounded-full ${dotClass}`} aria-hidden="true" />
         {shortTitle ? (
           <span className="truncate">
             <span className="text-sm @sm:hidden">{shortTitle}</span>
@@ -71,7 +68,17 @@ export function GameHeader({
             className={tabClass(tab === id)}
           >
             <Icon className="size-3.5" aria-hidden="true" />
-            {label}
+            {/* On narrow cards the second tab is shortened so the game title is never cut off. */}
+            {id === "info" ? (
+              <>
+                <span className="@sm:hidden" aria-hidden="true">
+                  Info
+                </span>
+                <span className="sr-only @sm:not-sr-only">{label}</span>
+              </>
+            ) : (
+              label
+            )}
           </button>
         ))}
       </div>

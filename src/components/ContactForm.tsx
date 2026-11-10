@@ -67,7 +67,7 @@ export function ContactForm() {
   }
 
   const inputClass =
-    "mt-1.5 block w-full rounded-md border bg-surface px-3 py-2.5 text-[0.9375rem] text-fg placeholder:text-subtle focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/25";
+    "mt-1.5 block w-full rounded-lg border bg-bg/60 px-3 py-2.5 text-base text-fg placeholder:text-subtle sm:text-[0.9375rem] focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/25";
 
   const field = (key: keyof Fields, label: string, type: "text" | "email" | "textarea", autoComplete?: string) => {
     const id = `contact-${key}`;
@@ -101,7 +101,7 @@ export function ContactForm() {
   };
 
   return (
-    <form onSubmit={onSubmit} noValidate className="rounded-xl border border-line bg-surface p-6 sm:p-7">
+    <form onSubmit={onSubmit} noValidate className="card min-w-0 p-5 sm:p-8">
       <div className="grid gap-5 sm:grid-cols-2">
         {field("name", "Name", "text", "name")}
         {field("email", "Email", "email", "email")}
@@ -113,7 +113,7 @@ export function ContactForm() {
         <button
           type="submit"
           disabled={status === "sending"}
-          className="inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-md bg-accent px-4 py-2.5 text-sm font-medium text-on-accent transition-colors hover:bg-accent-hover disabled:opacity-60"
+          className="btn-primary tap inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-full px-5 py-2.5 text-sm font-medium disabled:opacity-60"
         >
           {endpoint ? (status === "sending" ? "Sending message…" : "Send message") : "Open in email app"}
         </button>

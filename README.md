@@ -4,7 +4,7 @@ Personal portfolio for an MSc Data Science student at the University of Surrey, 
 
 Live site: https://mohith-tk.pages.dev
 
-- **Stack:** Next.js 16 (static export), React 19, TypeScript, Tailwind CSS 4, Lucide icons, Geist font
+- **Stack:** Next.js 16 (static export), React 19, TypeScript, Tailwind CSS 4, Lucide icons, Geist and Instrument Serif fonts (both self-hosted at build time)
 - **Hosting:** Cloudflare Pages (`mohith-tk.pages.dev`), which builds and deploys on every push to `main`
 - **Runtime dependencies:** five (`next`, `react`, `react-dom`, `lucide-react`, `geist`). No analytics, trackers or external scripts.
 
@@ -18,7 +18,8 @@ src/
   app/
     layout.tsx         Page shell, SEO metadata, theme script
     page.tsx           Section order and structured data (JSON-LD)
-    globals.css        Colour tokens (light and dark), base styles, hero animation
+    globals.css        Design system: colour tokens (light and dark), shared .card, .eyebrow,
+                       .btn-primary and .rule styles, hero backdrop and motion
     icon.svg           Favicon
     opengraph-image.png, twitter-image.png   Link preview image (1200 × 630)
     robots.ts, sitemap.ts
@@ -75,8 +76,10 @@ Each project has a summary, problem, objective, contribution, approach and key d
 ### Coursework write-ups (`profile.ts` → `academicProjects`)
 There is a commented example. Each entry can include the problem statement, dataset, methodology, techniques, results, critical evaluation and a repository link. Empty fields are not shown.
 
+The coursework write-ups block is hidden the same way until `academicProjects` has an entry.
+
 ### Certifications (`profile.ts` → `certifications`)
-Add an entry with `title`, `issuer`, `date` and, optionally, `credentialId` and `verifyUrl`. Until there is at least one, the section shows a "No certifications listed yet" message. External courses in progress go in `coursesInProgress`.
+Add an entry with `title`, `issuer`, `date` and, optionally, `credentialId` and `verifyUrl`. External courses in progress go in `coursesInProgress`. The section stays hidden until one of the two lists has an entry, so visitors never see an empty placeholder.
 
 ### Skills (`skills.ts`)
 Add items to an area, or add a new area. Put project slugs in `appliedIn` to link the projects where that area is used. Skills have no ratings or percentages, by design.
@@ -95,9 +98,22 @@ Export the new CV as a PDF and save it over `public/cv/Mohith-Thuraiyur-Kirubana
 
 The button then changes to **Send message** and shows success or error feedback.
 
+## Motion system
+
+All motion is hand-written CSS plus one small client component; there is no animation library.
+
+- `src/components/motion/MotionRoot.tsx` drives everything page-wide. Sections stay server components and opt in with data attributes: `data-reveal` (fade in on scroll; `data-reveal="title"` slides masked words up), `data-magnetic` (leans towards the pointer), `data-spot` (pointer spotlight) and `data-tilt` (3D tilt). Pointer effects are attached only for a mouse or trackpad.
+- `src/components/motion/Split.tsx` splits text into masked words or characters. The real text stays in `aria-label`.
+- `src/components/motion/HeroCanvas.tsx` is the hero's particle network. It stops when off screen or in a hidden tab and uses fewer points on phones.
+- `src/components/ProjectVisual.tsx` holds the line-drawn project previews, keyed by project slug. A project without a drawing gets a generic one.
+- The opening loader is pure CSS and shows once per browser tab. The scroll progress bar and the education timeline use CSS scroll timelines where the browser supports them.
+- With `prefers-reduced-motion`, the loader, particle movement, marquee and reveals are all switched off and content is simply shown.
+
+The site opens in the dark theme; the header toggle still switches to light and remembers the choice.
+
 ## The hero games
 
-The hero has a slider with three games, each with Play and How it works tabs (`src/components/HeroGames.tsx`, `GameTabs.tsx`). Live clustering (`HeroPlayground.tsx`) is k-means written from scratch on a canvas; it pauses when it is not the visible slide.
+The Interactive lab section (`src/components/Lab.tsx`) has a slider with three games, each with Play and How it works tabs (`src/components/HeroGames.tsx`, `GameTabs.tsx`). Live clustering (`HeroPlayground.tsx`) is k-means written from scratch on a canvas; it pauses when it is not the visible slide.
 
 "Do you like to work with someone like me?" (`HeroWorkWithMe.tsx`) is the last slide: three questions about what visitors value in a teammate, each answered with a short reply from me, ending on the mindset behind this portfolio. The questions, replies and closing text live in `src/lib/workWithMe.ts`. Answers are kept in memory only and never stored.
 

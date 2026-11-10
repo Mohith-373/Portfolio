@@ -1,7 +1,9 @@
 import type { ReactNode } from "react";
+import { Split } from "./motion/Split";
 
-// Shared section frame: heading and a one-sentence lead on the left rail,
-// content on the right. Keeps every section aligned to the same grid.
+// Shared section frame: number, heading and a one-sentence lead on the left rail,
+// content on the right. Keeps every section aligned to the same grid. The heading's
+// words slide up from a mask when the section scrolls into view.
 export function Section({
   id,
   title,
@@ -14,13 +16,26 @@ export function Section({
   children: ReactNode;
 }) {
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className="border-t border-line">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-20 sm:px-6 md:py-28 lg:grid-cols-[17rem_1fr] lg:gap-16">
-        <header className="lg:sticky lg:top-24 lg:self-start">
-          <h2 id={`${id}-title`} className="text-2xl font-semibold tracking-[-0.02em] text-fg sm:text-3xl">
-            {title}
+    <section id={id} aria-labelledby={`${id}-title`}>
+      <div className="rule mx-auto max-w-6xl" aria-hidden="true" />
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-20 sm:px-6 sm:py-24 lg:grid-cols-[17rem_1fr] lg:gap-16 lg:py-36">
+        <header data-reveal="title" className="lg:sticky lg:top-28 lg:self-start">
+          <p className="eyebrow mb-4 flex items-center gap-3 text-accent" aria-hidden="true">
+            <span className="section-index" />
+            <span className="h-px w-8 bg-accent/40" />
+          </p>
+          <h2
+            id={`${id}-title`}
+            aria-label={title}
+            className="text-balance text-[2rem] font-semibold leading-[1.08] tracking-[-0.035em] text-fg sm:text-[2.5rem]"
+          >
+            <Split text={title} />
           </h2>
-          {lead ? <p className="mt-3 max-w-prose text-[0.95rem] leading-relaxed text-muted">{lead}</p> : null}
+          {lead ? (
+            <p data-reveal className="mt-5 max-w-prose text-[0.95rem] leading-relaxed text-muted">
+              {lead}
+            </p>
+          ) : null}
         </header>
         <div className="min-w-0">{children}</div>
       </div>

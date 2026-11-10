@@ -18,7 +18,7 @@ const MIN_K = 2;
 const MAX_K = 6;
 
 type Point = { x: number; y: number; vx: number; vy: number; ox: number; oy: number; src: number; cluster: number; born: number };
-type Source = { ax: number; ay: number; fx: number; fy: number; px: number; py: number; spread: number; x: number; y: number; temp?: boolean; until?: number };
+type Source = { ax: number; ay: number; fx: number; fy: number; px: number; py: number; spread: number; x: number; y: number; temp?: boolean; until?: number; done?: boolean };
 type Centroid = { x: number; y: number };
 
 function gaussian(rand: () => number) {
@@ -159,10 +159,13 @@ export function HeroPlayground({ active = true }: { active?: boolean }) {
         src.y = 0.5 + src.ay * Math.sin(src.py + t * src.fy * 2 * Math.PI);
       }
       // Remove expired click bursts once their points have faded.
-      s.points = s.points.filter((p) => {
-        const src = s.sources[p.src];
-        return !(src.temp && src.until !== undefined && now > src.until);
-      });
+      if (s.sources.some((src) => src.temp && src.until !== undefined && now > src.until && !src.done)) {
+        s.points = s.points.filter((p) => {
+          const src = s.sources[p.src];
+          return !(src.temp && src.until !== undefined && now > src.until);
+        });
+        for (const src of s.sources) if (src.temp && src.until !== undefined && now > src.until) src.done = true;
+      }
 
       const aspect = width / Math.max(height, 1);
       for (const p of s.points) {
@@ -239,29 +242,49 @@ export function HeroPlayground({ active = true }: { active?: boolean }) {
       }
       ctx.setLineDash([]);
 
-      // Spokes from each point to its centre.
-      ctx.lineWidth = 1;
-      for (const p of s.points) {
-        const c = s.centroids[p.cluster];
-        if (!c) continue;
-        ctx.strokeStyle = COLORS[p.cluster % COLORS.length] + "22";
-        ctx.beginPath();
-        ctx.moveTo(p.x * width, p.y * height);
-        ctx.lineTo(c.x * width, c.y * height);
-        ctx.stroke();
-      }
-
-      // Points.
+      // Spokes and points are drawn as one path per group (a handful of draw calls
+      // per frame instead of several hundred), which keeps phones at a steady frame rate.
       const now = performance.now();
-      for (const p of s.points) {
-        const src = s.sources[p.src];
-        let alpha = 0.9;
-        if (src.temp && src.until !== undefined) alpha = Math.max(0, Math.min(0.9, (src.until - now) / 1500));
-        ctx.globalAlpha = alpha;
-        ctx.fillStyle = COLORS[p.cluster % COLORS.length];
+      ctx.lineWidth = 1;
+      for (let ci = 0; ci < s.centroids.length; ci++) {
+        const c = s.centroids[ci];
+        const color = COLORS[ci % COLORS.length];
+        const cx = c.x * width;
+        const cy = c.y * height;
+
+        // Spokes from each point to its centre.
+        ctx.strokeStyle = color + "22";
         ctx.beginPath();
-        ctx.arc(p.x * width, p.y * height, 3.2, 0, Math.PI * 2);
+        for (const p of s.points) {
+          if (p.cluster !== ci) continue;
+          ctx.moveTo(p.x * width, p.y * height);
+          ctx.lineTo(cx, cy);
+        }
+        ctx.stroke();
+
+        // Points. Only dots from a click burst that is fading out need their own alpha.
+        ctx.fillStyle = color;
+        ctx.globalAlpha = 0.9;
+        ctx.beginPath();
+        for (const p of s.points) {
+          if (p.cluster !== ci) continue;
+          const src = s.sources[p.src];
+          if (src.temp && src.until !== undefined && src.until - now < 1500) continue;
+          const x = p.x * width;
+          const y = p.y * height;
+          ctx.moveTo(x + 3.2, y);
+          ctx.arc(x, y, 3.2, 0, Math.PI * 2);
+        }
         ctx.fill();
+        for (const p of s.points) {
+          if (p.cluster !== ci) continue;
+          const src = s.sources[p.src];
+          if (!(src.temp && src.until !== undefined && src.until - now < 1500)) continue;
+          ctx.globalAlpha = Math.max(0, Math.min(0.9, (src.until - now) / 1500));
+          ctx.beginPath();
+          ctx.arc(p.x * width, p.y * height, 3.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
       ctx.globalAlpha = 1;
 
@@ -423,7 +446,7 @@ export function HeroPlayground({ active = true }: { active?: boolean }) {
   }, [active, tab]);
 
   const button =
-    "inline-flex size-8 items-center justify-center rounded-md border border-line text-fg transition-colors hover:bg-surface-2 disabled:opacity-40 disabled:hover:bg-transparent";
+    "tap inline-flex size-8 items-center justify-center rounded-md border border-line text-fg transition-colors hover:bg-surface-2 disabled:opacity-40 disabled:hover:bg-transparent";
 
   return (
     <div

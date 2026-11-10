@@ -21,11 +21,11 @@ export function HeroGames() {
   const go = (i: number) => setIndex((i + games.length) % games.length);
 
   const arrow =
-    "inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-line bg-surface text-fg transition-colors hover:bg-surface-2";
+    "tap inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-line bg-surface text-fg transition-colors hover:bg-surface-2";
 
   return (
     <div aria-roledescription="carousel" aria-label="Interactive demos" data-games data-index={index} className="@container">
-      <div className="grid overflow-hidden rounded-2xl">
+      <div className="demo-frame grid overflow-hidden rounded-2xl">
         {games.map((game, i) => {
           const isActive = i === index;
           return (
@@ -36,7 +36,7 @@ export function HeroGames() {
               aria-label={`${i + 1} of ${games.length}: ${game.label}`}
               aria-hidden={!isActive}
               inert={!isActive}
-              className="col-start-1 row-start-1 transition-[transform,opacity,visibility] duration-500 ease-out motion-reduce:transition-none"
+              className="col-start-1 row-start-1 min-w-0 transition-[transform,opacity,visibility] duration-300 ease-out motion-reduce:transition-none"
               style={{
                 transform: `translateX(${(i - index) * 106}%)`,
                 opacity: isActive ? 1 : 0,
@@ -66,7 +66,7 @@ export function HeroGames() {
               type="button"
               onClick={() => go(i)}
               aria-current={i === index ? "true" : undefined}
-              className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm transition-colors ${
+              className={`tap inline-flex items-center justify-center gap-2 rounded-full px-3 py-1 text-sm transition-colors ${
                 i === index ? "bg-surface text-fg shadow-sm" : "text-muted hover:text-fg"
               }`}
             >

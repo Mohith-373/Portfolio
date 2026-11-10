@@ -4,6 +4,8 @@
 export const site = {
   name: "Mohith Thuraiyur Kirubanandham",
   shortName: "Mohith T K",
+  // Shown above the name in the hero.
+  identity: "Data Science & AI · MSc Student",
   roles: ["MSc Data Science Student", "Aspiring Data Scientist", "AI & Machine Learning Enthusiast"],
   headline: "Turning data into insights. Building intelligence into solutions.",
   intro:
@@ -45,9 +47,9 @@ export const site = {
 export const navItems = [
   { id: "home", label: "Home" },
   { id: "about", label: "About" },
-  { id: "skills", label: "Skills" },
-  { id: "projects", label: "Projects" },
   { id: "research", label: "Research" },
+  { id: "projects", label: "Projects" },
+  { id: "skills", label: "Skills" },
   { id: "education", label: "Education" },
   { id: "contact", label: "Contact" },
 ] as const;

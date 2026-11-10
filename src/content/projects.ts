@@ -1,4 +1,5 @@
-// Projects shown in the Projects section, strongest first.
+// Projects shown in the Projects section, in display order: healthcare, vehicle safety
+// and AI projects first, then data engineering and software.
 // Every statement here is based on the project's repository or on details you gave.
 // Optional fields (challenges, results, demo) are hidden when empty: only add them
 // when you can back them up, e.g. with a test run, a screenshot or a write-up.
@@ -47,6 +48,52 @@ export const categories: Category[] = [
 ];
 
 export const projects: Project[] = [
+  {
+    slug: "stroke-prediction",
+    title: "Stroke Prediction System",
+    summary: "A machine learning model that estimates a patient's stroke risk from their attributes.",
+    context: "BSc academic project",
+    year: "2023–2026",
+    categories: ["Data Science", "Machine Learning"],
+    stack: ["Python", "scikit-learn"],
+    problem: "Spotting people at higher risk of stroke early can support earlier medical follow-up.",
+    objective: "Predict the likelihood of stroke from patient attributes using supervised learning.",
+    contribution: "Developed the analysis and model as a BSc academic project.",
+    approach: [
+      "Explored the patient attributes with exploratory data analysis.",
+      "Selected features for the model.",
+      "Built the predictive model with scikit-learn.",
+    ],
+    decisions: ["Framed as early risk identification only, not diagnosis."],
+    status: "Academic project, not for clinical use. Code not yet published.",
+  },
+  {
+    slug: "vehicle-black-box",
+    title: "Secure Vehicle Black Box",
+    summary:
+      "An IoT black box prototype that records vehicle sensor data, encrypts every packet and stores it for post-incident analysis.",
+    context: "BSc academic project",
+    year: "2026",
+    categories: ["Research Projects", "Data Engineering"],
+    stack: ["NodeMCU (ESP8266)", "Arduino C/C++", "Python", "RC6 encryption", "ThingSpeak"],
+    problem:
+      "After a road incident, investigators and insurers need sensor records they can trust have not been altered.",
+    objective: "Capture motion, location and environmental readings from a vehicle and keep them in an encrypted log for later analysis.",
+    contribution: "Developed the NodeMCU firmware and the Python encryption and decryption scripts in this repository.",
+    approach: [
+      "A NodeMCU reads an MPU6050 accelerometer and gyroscope, a NEO-6M GPS module and a DHT11 temperature and humidity sensor, with a 16x2 LCD for local display.",
+      "A Python script polls the device every 5 seconds, encrypts each reading with RC6 using a 128-bit key and appends it to a CSV log.",
+      "A second script decrypts the log for analysis, and ciphertext can also be sent to ThingSpeak dashboards.",
+    ],
+    decisions: [
+      "Symmetric RC6 encryption with a shared 128-bit key between the logging and decryption scripts.",
+      "A push button and a potentiometer simulate braking and speed, so the prototype can be tested on a bench.",
+    ],
+    status:
+      "Prototype. Tamper detection, event replay and automated reports are described as design goals but are not yet in the published code.",
+    repo: "https://github.com/Mohith-373/vehicle-black-box-forensics",
+    featured: true,
+  },
   {
     slug: "nifty-drawdown-alert",
     title: "NIFTY 50 Drawdown Alert System",
@@ -104,33 +151,6 @@ export const projects: Project[] = [
     featured: true,
   },
   {
-    slug: "vehicle-black-box",
-    title: "Secure Vehicle Black Box",
-    summary:
-      "An IoT black box prototype that records vehicle sensor data, encrypts every packet and stores it for post-incident analysis.",
-    context: "BSc academic project",
-    year: "2026",
-    categories: ["Research Projects", "Data Engineering"],
-    stack: ["NodeMCU (ESP8266)", "Arduino C/C++", "Python", "RC6 encryption", "ThingSpeak"],
-    problem:
-      "After a road incident, investigators and insurers need sensor records they can trust have not been altered.",
-    objective: "Capture motion, location and environmental readings from a vehicle and keep them in an encrypted log for later analysis.",
-    contribution: "Developed the NodeMCU firmware and the Python encryption and decryption scripts in this repository.",
-    approach: [
-      "A NodeMCU reads an MPU6050 accelerometer and gyroscope, a NEO-6M GPS module and a DHT11 temperature and humidity sensor, with a 16x2 LCD for local display.",
-      "A Python script polls the device every 5 seconds, encrypts each reading with RC6 using a 128-bit key and appends it to a CSV log.",
-      "A second script decrypts the log for analysis, and ciphertext can also be sent to ThingSpeak dashboards.",
-    ],
-    decisions: [
-      "Symmetric RC6 encryption with a shared 128-bit key between the logging and decryption scripts.",
-      "A push button and a potentiometer simulate braking and speed, so the prototype can be tested on a bench.",
-    ],
-    status:
-      "Prototype. Tamper detection, event replay and automated reports are described as design goals but are not yet in the published code.",
-    repo: "https://github.com/Mohith-373/vehicle-black-box-forensics",
-    featured: true,
-  },
-  {
     slug: "bookshop-microservices",
     title: "Bookshop Microservices API",
     summary:
@@ -157,40 +177,6 @@ export const projects: Project[] = [
     repo: "https://github.com/Mohith-373/bookshop-microservices-api",
   },
   {
-    slug: "fake-news-detection",
-    title: "Fake News Detection Model",
-    summary: "A convolutional neural network that classifies news articles as real or fake from their text.",
-    context: "BSc academic project",
-    year: "2023–2026",
-    categories: ["Artificial Intelligence", "Machine Learning"],
-    stack: ["Python", "CNN", "Deep learning", "NLP"],
-    problem: "Misinformation spreads faster than people can check it by hand, so automated screening of news text is a useful first filter.",
-    objective: "Train a deep learning model to separate real and fake news using the article text.",
-    contribution: "Developed the model as a BSc academic project.",
-    approach: ["Preprocessed the article text for the model.", "Built a CNN architecture for text classification."],
-    decisions: ["A convolutional network, which picks up local word patterns in text, as the classifier."],
-    status: "Code not yet published.",
-  },
-  {
-    slug: "stroke-prediction",
-    title: "Stroke Prediction System",
-    summary: "A machine learning model that estimates a patient's stroke risk from their attributes.",
-    context: "BSc academic project",
-    year: "2023–2026",
-    categories: ["Data Science", "Machine Learning"],
-    stack: ["Python", "scikit-learn"],
-    problem: "Spotting people at higher risk of stroke early can support earlier medical follow-up.",
-    objective: "Predict the likelihood of stroke from patient attributes using supervised learning.",
-    contribution: "Developed the analysis and model as a BSc academic project.",
-    approach: [
-      "Explored the patient attributes with exploratory data analysis.",
-      "Selected features for the model.",
-      "Built the predictive model with scikit-learn.",
-    ],
-    decisions: ["Framed as early risk identification only, not diagnosis."],
-    status: "Academic project, not for clinical use. Code not yet published.",
-  },
-  {
     slug: "rk-creators-builders",
     title: "RK Creators & Builders Website",
     summary: "A website and admin panel for a family-run construction business in Thuraiyur, Tamil Nadu.",
@@ -214,25 +200,6 @@ export const projects: Project[] = [
       "The CI deploy failed on a platform-specific lockfile conflict; fixed by installing only the functions' dependencies in the workflow.",
     ],
     repo: "https://github.com/Mohith-373/rk-creators-builders",
-  },
-  {
-    slug: "medical-inventory",
-    title: "Medical Inventory Management",
-    summary: "A Salesforce app for tracking medical suppliers, products, purchase orders and expiry dates.",
-    context: "Team project",
-    year: "2025",
-    categories: ["Software Development"],
-    stack: ["Salesforce", "Apex", "Lightning", "Flows"],
-    problem: "Medical stock has to be tracked against suppliers and expiry dates so that expired items are not used.",
-    objective: "Build a Salesforce Lightning app that manages suppliers, products, purchase orders and inventory transactions.",
-    contribution: "Team member in a Naan Mudhalvan programme project; the work was shared across the team.",
-    approach: [
-      "Custom objects for products, purchase orders, order items, inventory transactions and suppliers.",
-      "Validation rules, page and compact layouts, profiles, roles and permission sets.",
-      "A flow that updates actual delivery dates and an Apex trigger that totals order-item amounts per purchase order.",
-    ],
-    decisions: ["Purchase order totals are calculated by an Apex trigger so they stay correct when order items change."],
-    status: "The repository holds the team's project report.",
-    repo: "https://github.com/Mohith-373/mohith-medical-inventory-management-",
+    demo: "https://rk-creators-builders.netlify.app/",
   },
 ];

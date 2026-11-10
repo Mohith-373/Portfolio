@@ -31,26 +31,47 @@ export function HeroDigitGame() {
   const pending = useRef(false);
   const modelRef = useRef<DigitModel | null>(null);
   const exampleIndex = useRef(0);
+  // Cached per stroke or theme change, so drawing never forces a style or layout pass.
+  const inkColor = useRef("#12161c");
+  const bounds = useRef<DOMRect | null>(null);
+  // One hidden canvas and buffer for the model input, reused for every guess.
+  const inkCanvas = useRef<HTMLCanvasElement | null>(null);
+  const inkBuffer = useRef<Float32Array | null>(null);
 
-  // Load the trained weights once the page has settled.
+  // Load the trained weights (about 280 KB) only when the game is about to scroll into view,
+  // so they never compete with the first paint on a phone.
   useEffect(() => {
     setTouch(window.matchMedia("(hover: none)").matches);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
     let cancelled = false;
-    fetch(withBase("/models/digits.json"))
-      .then((r) => {
-        if (!r.ok) throw new Error(String(r.status));
-        return r.json();
-      })
-      .then((raw) => {
-        if (cancelled) return;
-        const parsed = parseModel(raw);
-        modelRef.current = parsed;
-        setModel(parsed);
-        exampleIndex.current = Math.floor(Math.random() * 10);
-      })
-      .catch(() => !cancelled && setLoadError(true));
+    const load = () => {
+      fetch(withBase("/models/digits.json"))
+        .then((r) => {
+          if (!r.ok) throw new Error(String(r.status));
+          return r.json();
+        })
+        .then((raw) => {
+          if (cancelled) return;
+          const parsed = parseModel(raw);
+          modelRef.current = parsed;
+          setModel(parsed);
+          exampleIndex.current = Math.floor(Math.random() * 10);
+        })
+        .catch(() => !cancelled && setLoadError(true));
+    };
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        io.disconnect();
+        load();
+      },
+      { rootMargin: "600px 0px" },
+    );
+    io.observe(canvas);
     return () => {
       cancelled = true;
+      io.disconnect();
     };
   }, []);
 
@@ -67,7 +88,7 @@ export function HeroDigitGame() {
       canvas.height = Math.round(rect.height * dpr);
     }
     const w = canvas.width;
-    const ink = getComputedStyle(document.documentElement).getPropertyValue("--fg").trim() || "#12161c";
+    const ink = inkColor.current;
     ctx.clearRect(0, 0, w, w);
 
     if (example.current) {
@@ -132,10 +153,13 @@ export function HeroDigitGame() {
     if (example.current) {
       input = Float32Array.from(example.current, (v) => v / 255);
     } else if (strokes.current.length > 0) {
-      const off = document.createElement("canvas");
-      off.width = INK_SIZE;
-      off.height = INK_SIZE;
-      const octx = off.getContext("2d")!;
+      if (!inkCanvas.current) {
+        inkCanvas.current = document.createElement("canvas");
+        inkCanvas.current.width = INK_SIZE;
+        inkCanvas.current.height = INK_SIZE;
+        inkBuffer.current = new Float32Array(INK_SIZE * INK_SIZE);
+      }
+      const octx = inkCanvas.current.getContext("2d", { willReadFrequently: true })!;
       octx.fillStyle = "#000";
       octx.fillRect(0, 0, INK_SIZE, INK_SIZE);
       octx.strokeStyle = "#fff";
@@ -149,7 +173,7 @@ export function HeroDigitGame() {
         octx.stroke();
       }
       const px = octx.getImageData(0, 0, INK_SIZE, INK_SIZE).data;
-      const ink = new Float32Array(INK_SIZE * INK_SIZE);
+      const ink = inkBuffer.current!;
       for (let i = 0; i < ink.length; i++) ink[i] = px[i * 4] / 255;
       input = toMnist(ink, INK_SIZE);
     }
@@ -161,7 +185,7 @@ export function HeroDigitGame() {
   const schedule = useCallback(() => {
     if (pending.current) return;
     pending.current = true;
-    window.setTimeout(() => requestAnimationFrame(runModel), 90);
+    window.setTimeout(() => requestAnimationFrame(runModel), 120);
   }, [runModel]);
 
   // Re-run once the model finishes loading, in case someone drew first.
@@ -173,40 +197,68 @@ export function HeroDigitGame() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    const readInk = () => {
+      inkColor.current = getComputedStyle(document.documentElement).getPropertyValue("--fg").trim() || "#12161c";
+    };
+    readInk();
     render();
     renderPreview(null);
 
     const pos = (e: PointerEvent) => {
-      const r = canvas.getBoundingClientRect();
+      const r = bounds.current ?? canvas.getBoundingClientRect();
       return { x: Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)), y: Math.min(1, Math.max(0, (e.clientY - r.top) / r.height)) };
+    };
+    // While drawing, paint only the newest piece of the line instead of repainting every stroke.
+    const segment = (a: { x: number; y: number }, b: { x: number; y: number }) => {
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      const w = canvas.width;
+      ctx.strokeStyle = inkColor.current;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.lineWidth = w * 0.075;
+      ctx.beginPath();
+      ctx.moveTo(a.x * w, a.y * w);
+      ctx.lineTo(b.x * w + (a === b ? 0.1 : 0), b.y * w);
+      ctx.stroke();
     };
     const down = (e: PointerEvent) => {
       if (e.button > 0) return;
       e.preventDefault();
       canvas.setPointerCapture(e.pointerId);
+      bounds.current = canvas.getBoundingClientRect();
       if (example.current) {
         example.current = null;
         strokes.current = [];
+        render();
       }
       drawing.current = true;
-      strokes.current.push([pos(e)]);
+      const p = pos(e);
+      strokes.current.push([p]);
       setHasInk(true);
-      render();
+      segment(p, p);
       schedule();
     };
     const move = (e: PointerEvent) => {
       if (!drawing.current) return;
       const s = strokes.current[strokes.current.length - 1];
-      const p = pos(e);
-      const last = s[s.length - 1];
-      if (Math.hypot(p.x - last.x, p.y - last.y) < 0.004) return;
-      s.push(p);
-      render();
-      schedule();
+      // Phones report several positions per frame; using all of them keeps fast strokes smooth.
+      const events = typeof e.getCoalescedEvents === "function" ? e.getCoalescedEvents() : [];
+      let added = false;
+      for (const ev of events.length > 0 ? events : [e]) {
+        const p = pos(ev);
+        const last = s[s.length - 1];
+        if (Math.hypot(p.x - last.x, p.y - last.y) < 0.004) continue;
+        s.push(p);
+        segment(last, p);
+        added = true;
+      }
+      if (added) schedule();
     };
     const up = () => {
       if (!drawing.current) return;
       drawing.current = false;
+      bounds.current = null;
       runModel();
     };
     canvas.addEventListener("pointerdown", down);
@@ -216,7 +268,10 @@ export function HeroDigitGame() {
 
     const ro = new ResizeObserver(() => render());
     ro.observe(canvas);
-    const mo = new MutationObserver(() => render());
+    const mo = new MutationObserver(() => {
+      readInk();
+      render();
+    });
     mo.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
     return () => {
       canvas.removeEventListener("pointerdown", down);
@@ -252,7 +307,7 @@ export function HeroDigitGame() {
   const confidence = probs ? probs[best] : 0;
 
   const actionClass =
-    "inline-flex items-center gap-1.5 rounded-md border border-line px-3 py-1.5 text-sm font-medium text-fg transition-colors hover:bg-surface-2 disabled:opacity-40 disabled:hover:bg-transparent";
+    "tap inline-flex items-center gap-1.5 rounded-md border border-line px-3 py-1.5 text-sm font-medium text-fg transition-colors hover:bg-surface-2 disabled:opacity-40 disabled:hover:bg-transparent";
 
   return (
     <div className="h-full rounded-2xl border border-line bg-surface p-4 sm:p-5" data-game="digits" data-guess={best} data-tab={tab}>
@@ -317,8 +372,8 @@ export function HeroDigitGame() {
               <div key={d} className="flex flex-col items-center gap-1">
                 <div className="flex h-10 w-full items-end overflow-hidden rounded-sm bg-surface-2">
                   <div
-                    className={`w-full rounded-sm transition-[height] duration-200 motion-reduce:transition-none ${d === best ? "bg-accent" : "bg-line-strong"}`}
-                    style={{ height: `${Math.max(p * 100, probs ? 2 : 0)}%` }}
+                    className={`h-full w-full origin-bottom rounded-sm transition-transform duration-200 motion-reduce:transition-none ${d === best ? "bg-accent" : "bg-line-strong"}`}
+                    style={{ transform: `scaleY(${Math.max(p, probs ? 0.02 : 0)})` }}
                   />
                 </div>
                 <span className={`text-xs tabular-nums ${d === best ? "font-semibold text-fg" : "text-subtle"}`}>{d}</span>
